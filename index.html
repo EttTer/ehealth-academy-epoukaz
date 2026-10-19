@@ -77,6 +77,31 @@
     bar.append(p,buttons);
     document.body.appendChild(bar);
   }
+
+  // Diagnostic interface is visible only when explicitly requested in the URL.
+  // It does not load analytics, send tests, or change consent by itself.
+  if(new URLSearchParams(location.search).get('analytics_debug')==='1'){
+    const diagnostic=document.createElement('aside');
+    diagnostic.setAttribute('aria-label','Diagnostika měření GA4');
+    diagnostic.style.cssText='position:fixed;top:8px;right:8px;max-width:365px;width:calc(100% - 16px);padding:14px;background:#fff;color:#18202b;border:2px solid #774a62;border-radius:12px;z-index:100000;box-shadow:0 4px 24px #0003;font:13px/1.5 system-ui,sans-serif';
+    const heading=document.createElement('strong');heading.textContent='GA4 diagnostika · '+moduleId;
+    const status=document.createElement('pre');status.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0;font:12px/1.55 monospace';
+    const test=document.createElement('button');test.type='button';test.textContent='Odeslat testovací událost';test.style.cssText='padding:8px;border:0;border-radius:6px;background:#774a62;color:white;cursor:pointer';
+    const close=document.createElement('button');close.type='button';close.textContent='Zavřít';close.style.cssText='padding:8px;background:white;border:1px solid #bbb;border-radius:6px;margin-left:7px;cursor:pointer';
+    const note=document.createElement('p');note.textContent='Test lze spustit pouze po souhlasu. Kontrola síťových požadavků může mít zpoždění a neprokazuje přijetí dat v GA4.';
+    diagnostic.append(heading,status,test,close,note);
+    function refresh(){
+      const entries=performance.getEntriesByType('resource');
+      const gaResources=entries.filter(x=>/googletagmanager.com\\/gtag\\/js|google-analytics.com\\/(g\\/collect|collect)|analytics.google.com\\/g\\/collect/.test(x.name));
+      const collect=gaResources.filter(x=>/\\/collect/.test(x.name));
+      status.textContent='Souhlas: '+(hasConsent()?'ANO':'NE')+'\\nSkript GA4 načten: '+(loaded?'ANO':loading?'Načítání':'NE')+'\\nVlastní události ve frontě: '+queuedEvents.length+'\\nPožadavky collect v Resource Timing: '+collect.length+'\\nGA zdroje: '+gaResources.map(x=>x.name.split('?')[0]).join(', ');
+    }
+    test.addEventListener('click',function(){if(!hasConsent()){refresh();note.textContent='Nejdřív je třeba udělit souhlas s analytikou.';return;}if(!loaded){enable();note.textContent='Čekám na načtení GA4. Zkuste znovu.';refresh();return;}send('academy_diagnostic_test',{debug_mode:1});note.textContent='Testovací událost vložena do fronty gtag. Po několika sekundách klikněte na Aktualizovat stav.';refresh();});
+    const update=document.createElement('button');update.type='button';update.textContent='Aktualizovat stav';update.style.cssText='padding:8px;border:1px solid #bbb;border-radius:6px;background:white;cursor:pointer;margin-top:6px';update.addEventListener('click',refresh);diagnostic.appendChild(update);
+    close.addEventListener('click',function(){diagnostic.remove()});
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(diagnostic);refresh()},{once:true});
+    else {document.body.appendChild(diagnostic);refresh();}
+  }
   if(hasConsent())enable();
   else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showConsent,{once:true});
   else showConsent();
