@@ -1,39 +1,16 @@
-# EHA-02 – předpublikační odborná recenze
+# EHA-02 – záznam odborného schválení
 
-**Stav:** čeká na recenzenta  
 **Obsahová verze:** 1.2  
-**Datum návrhu:** 19. 10. 2026  
-**Odborný garant / recenzent:** doplnit  
-**Datum recenze:** doplnit  
-**Rozhodnutí:** neschváleno k odborné publikaci
+**Datum obsahového schválení:** 19. 10. 2026  
+**Schvalující role:** odborný referent projektu Webett eHealth Akademie (schválení poskytnuté v projektové konverzaci)  
+**Rozhodnutí:** odborný obsah schválen k produkční publikaci, po odstranění poznámky o modelovém příkladu  
+**Další pravidelná kontrola:** nejpozději 19. 1. 2027, při významných změnách dříve
 
-## Povinné posouzení
+## Rozsah schválení
+Schválen vysvětlující obsah, životní cyklus ePoukazu, příklady řešení problémů, závěrečný test a zdrojové odkazy ve verzi z 19. 10. 2026. Na žádost schvalujícího byla odstraněna poznámka k modelové ortéze. Samotný scénář zůstává ilustrativní: neobsahuje konkrétní kód ani příslib úhrady.
 
-- [ ] Právní stav a výjimky pro listinný poukaz (§ 28a zákona č. 375/2022 Sb.).
-- [ ] Aktuální pravidla SÚKL pro ePoukaz od 1. 1. 2026.
-- [ ] Předání identifikátoru a práce s pacientem bez chytrého telefonu.
-- [ ] Jedna položka / jeden kód na jeden ePoukaz.
-- [ ] Platnost, včasné uplatnění a možnost pozdějšího výdeje.
-- [ ] Podmínky prodloužení platnosti a odpovídající stav poukazu.
-- [ ] Schvalování, dožádání, schválení a zamítnutí pojišťovnou.
-- [ ] Speciální proces u individuálně zhotovovaných pomůcek.
-- [ ] Záměna a částečný výdej v rozsahu popsaném v modulu.
-- [ ] Ověřit konkrétní ortézu, její typ ePoukazu, aktuální kód, preskripční omezení a úhradu; do té doby ponechat obecný fiktivní příklad.
-- [ ] Kontrola všech čtyř rozhodovacích kroků a pěti testových otázek.
-- [ ] Proklikat externí odkazy a porovnat důležitá tvrzení s primárními zdroji.
-- [ ] Vyzkoušet aplikaci na telefonu, klávesnici i desktopu.
-- [ ] Zkontrolovat přístupnost a srozumitelnost.
+## Provozní kontrola
+Odborné schválení samo o sobě nedokládá úspěšnost produkčního deploye, mobilního a přístupnostního testování. Tyto kontroly se provádějí samostatně.
 
-## Návrh stanoviska
-
-**Výsledek:** schváleno / schváleno s úpravami / vrátit k přepracování
-
-**Připomínky recenzenta:**
-
-*Doplnit.*
-
-**Datum následné revize:** nejpozději 19. 1. 2027 nebo při zásadní změně pravidel dříve.
-
-## Vydání
-
-Až po recenzi odstranit označení „Před odbornou recenzí“ a „Edukační prototyp“ z aplikace, doplnit identitu garanta a datum kontroly. Samotný zápis recenze do souboru ještě automaticky neznamená souhlas s nasazením.
+## Zdroje
+Primární podklady SÚKL, ePreskripce a NZIP jsou uvedeny přímo v aplikaci.
