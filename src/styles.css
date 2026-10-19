@@ -132,3 +132,18 @@ a{color:#774a62}
   .academyTopbarLinks{justify-content:center}
   .academyTopbarLinks a{min-height:34px}
 }
+
+
+/* Shared Webett Academy masthead v1 – preserve original Webett brand kit. */
+.academyModuleDropdown{position:relative;flex:none}
+.academyModuleDropdown summary{display:inline-flex;align-items:center;justify-content:center;gap:8px;list-style:none;cursor:pointer;border:1px solid #81abbc;background:#fff;border-radius:9px;padding:8px 13px;min-height:38px;color:#313e61;font-size:13px;font-weight:700}
+.academyModuleDropdown summary::-webkit-details-marker{display:none}
+.academyModuleDropdown summary::after{content:"⌄";color:#774a62;font-size:17px;line-height:1}
+.academyModuleDropdown[open] summary{background:#f0f0f0}
+.academyModuleDropdown summary:focus-visible{outline:3px solid #774a62;outline-offset:3px}
+.academyModuleItems{position:absolute;right:0;top:calc(100% + 8px);min-width:205px;padding:7px;border:1px solid #e7e0e5;border-radius:12px;background:white;box-shadow:0 12px 35px #313e6126;z-index:100;display:grid;gap:2px}
+.academyModuleItems a,.academyModuleItems span{display:block;padding:10px 11px;border-radius:8px;font-size:13px;font-weight:650;color:#313e61;text-decoration:none;white-space:nowrap}
+.academyModuleItems a:hover{background:#f0f0f0}
+.academyModuleItems [aria-current="page"]{background:#fbd2c9;color:#313e61}
+.academyModuleItems .unavailable{color:#73717a;font-weight:450}
+@media(max-width:640px){.academyModuleItems{right:0;min-width:190px}.academyModuleDropdown summary{min-height:34px;padding:7px 10px;font-size:12px}}
