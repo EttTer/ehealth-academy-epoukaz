@@ -35,13 +35,12 @@
     window.dataLayer=window.dataLayer||[];
     window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
     window.gtag('js',new Date());
-    window.gtag('config',measurementId,{send_page_view:false});
+    window.gtag('config',measurementId);
     const tag=document.createElement('script');
     tag.async=true;
     tag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(measurementId);
     tag.onload=function(){
       loaded=true;
-      window.gtag('event','page_view',{page_title:document.title,page_location:location.href,module_id:moduleId});
       if(moduleId==='EHA-HUB')send('academy_landing_viewed');
       else if(!queuedEvents.some(x=>x[0]==='module_started'))send('module_started');
       for(const item of queuedEvents.splice(0))send(item[0],item[1]);
