@@ -147,3 +147,9 @@ a{color:#774a62}
 .academyModuleItems [aria-current="page"]{background:#fbd2c9;color:#313e61}
 .academyModuleItems .unavailable{color:#73717a;font-weight:450}
 @media(max-width:640px){.academyModuleItems{right:0;min-width:190px}.academyModuleDropdown summary{min-height:34px;padding:7px 10px;font-size:12px}}
+
+
+/* Webett Academy header refinement: one clear menu, properly centered chevron. */
+.academyModuleDropdown summary{display:flex;align-items:center;justify-content:center;gap:12px;line-height:1.25;white-space:nowrap}
+.academyModuleDropdown summary::after{content:"";display:block;width:7px;height:7px;flex:0 0 7px;border-right:2px solid #774a62;border-bottom:2px solid #774a62;transform:translateY(-2px) rotate(45deg)}
+.academyModuleDropdown[open] summary::after{transform:translateY(2px) rotate(225deg)}
