@@ -90,13 +90,39 @@
     const close=document.createElement('button');close.type='button';close.textContent='Zavřít';close.style.cssText='padding:8px;background:white;border:1px solid #bbb;border-radius:6px;margin-left:7px;cursor:pointer';
     const note=document.createElement('p');note.textContent='Test lze spustit pouze po souhlasu. Kontrola síťových požadavků může mít zpoždění a neprokazuje přijetí dat v GA4.';
     diagnostic.append(heading,status,test,close,note);
+    let testState='Test zatím nebyl spuštěn';
     function refresh(){
       const entries=performance.getEntriesByType('resource');
-      const gaResources=entries.filter(x=>x.name.includes('googletagmanager.com/gtag/js') || x.name.includes('google-analytics.com/g/collect') || x.name.includes('google-analytics.com/collect') || x.name.includes('analytics.google.com/g/collect'));
-      const collect=gaResources.filter(x=>x.name.includes('/collect'));
-      status.textContent='Souhlas: '+(hasConsent()?'ANO':'NE')+'\\nSkript GA4 načten: '+(loaded?'ANO':loading?'Načítání':'NE')+'\\nVlastní události ve frontě: '+queuedEvents.length+'\\nPožadavky collect v Resource Timing: '+collect.length+'\\nGA zdroje: '+gaResources.map(x=>x.name.split('?')[0]).join(', ');
+      const collect=entries.filter(x=>x.name.includes('/collect') && (x.name.includes('google-analytics.com') || x.name.includes('analytics.google.com')));
+      const script=entries.filter(x=>x.name.includes('googletagmanager.com/gtag/js'));
+      const lines=[
+        'Souhlas: '+(hasConsent()?'ANO':'NE'),
+        'Skript GA4: '+(loaded?'Načten':loading?'Načítání':'Nenačten'),
+        'gtag funkce: '+(typeof window.gtag==='function'?'Dostupná':'Nedostupná'),
+        'Fronta dataLayer: '+(Array.isArray(window.dataLayer)?window.dataLayer.length:'Nedostupná'),
+        'Požadavky collect viditelné v Resource Timing: '+collect.length,
+        'Skriptové zdroje: '+script.length,
+        'Test: '+testState,
+        'Pozn.: Resource Timing nemusí ukazovat všechny přenosy.'
+      ];
+      status.textContent=lines.join(String.fromCharCode(10));
     }
-    test.addEventListener('click',function(){if(!hasConsent()){refresh();note.textContent='Nejdřív je třeba udělit souhlas s analytikou.';return;}if(!loaded){enable();note.textContent='Čekám na načtení GA4. Zkuste znovu.';refresh();return;}window.gtag('event','academy_diagnostic_test',{module_id:moduleId,debug_mode:true});note.textContent='Testovací událost vložena do fronty gtag. Po několika sekundách klikněte na Aktualizovat stav.';refresh();});
+    test.addEventListener('click',function(){
+      if(!hasConsent()){testState='Souhlas nebyl udělen';refresh();return;}
+      if(!loaded){testState='Skript ještě není načten';enable();refresh();return;}
+      testState='Příkaz předán do gtag; čeká se na callback';
+      refresh();
+      window.gtag('event','academy_diagnostic_test',{
+        module_id:moduleId,
+        debug_mode:true,
+        event_callback:function(){
+          testState='Callback gtag proběhl (přijetí serverem není potvrzeno)';
+          refresh();
+        },
+        event_timeout:5000
+      });
+      note.textContent='Pokud callback neproběhne, událost může být blokována. I úspěšný callback je nutné ověřit v GA4 DebugView.';
+    });
     const update=document.createElement('button');update.type='button';update.textContent='Aktualizovat stav';update.style.cssText='padding:8px;border:1px solid #bbb;border-radius:6px;background:white;cursor:pointer;margin-top:6px';update.addEventListener('click',refresh);diagnostic.appendChild(update);
     close.addEventListener('click',function(){diagnostic.remove()});
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(diagnostic);refresh()},{once:true});
