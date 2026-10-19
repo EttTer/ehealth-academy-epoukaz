@@ -1,37 +1,86 @@
 <!doctype html><html lang="cs"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="description" content="Interaktivní průvodce ePoukazem pro lékaře – Webett eHealth Academy"/><title>ePoukaz | Webett eHealth Academy</title><link rel="icon" type="image/svg+xml" href="/webett-symbol.svg"/><script>
 (function(){
-  const measurementId='G-YLK34M0F9C', moduleId='EHA-02', key='webett_academy_analytics_consent';
-  window.academyTrack=function(event,parameters){
-    if(localStorage.getItem(key)!=='granted'||typeof window.gtag!=='function')return;
-    window.gtag('event',event,Object.assign({module_id:moduleId},parameters||{}));
+  'use strict';
+  const measurementId='G-YLK34M0F9C';
+  const moduleId='EHA-02';
+  const consentKey='webett_academy_analytics_consent';
+  const queuedEvents=[];
+  let loaded=false;
+  let loading=false;
+  let consent=false;
+  function hasConsent(){
+    try{return localStorage.getItem(consentKey)==='granted';}
+    catch(e){return false;}
+  }
+  function send(event,params){
+    if(!consent || !loaded || typeof window.gtag!=='function')return;
+    window.gtag('event',event,Object.assign({module_id:moduleId},params||{}));
+  }
+  window.academyTrack=function(event,params){
+    if(!hasConsent()){
+      // Only keep the initial educational entry until the visitor chooses.
+      if(event==='module_started' && queuedEvents.length===0)queuedEvents.push([event,params]);
+      return;
+    }
+    if(!loaded){
+      if(queuedEvents.length<20)queuedEvents.push([event,params]);
+      return;
+    }
+    send(event,params);
   };
   function enable(){
-    if(window.__academyAnalyticsLoaded)return;
-    window.__academyAnalyticsLoaded=true;
+    if(loading||loaded||!hasConsent())return;
+    consent=true;
+    loading=true;
     window.dataLayer=window.dataLayer||[];
-    window.gtag=function(){window.dataLayer.push(arguments)};
+    window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
     window.gtag('js',new Date());
-    window.gtag('config',measurementId,{send_page_view:true});
-    const script=document.createElement('script');
-    script.async=true;script.src='https://www.googletagmanager.com/gtag/js?id='+measurementId;
-    document.head.appendChild(script);
+    window.gtag('config',measurementId,{send_page_view:false});
+    const tag=document.createElement('script');
+    tag.async=true;
+    tag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(measurementId);
+    tag.onload=function(){
+      loaded=true;
+      window.gtag('event','page_view',{page_title:document.title,page_location:location.href,module_id:moduleId});
+      if(moduleId==='EHA-HUB')send('academy_landing_viewed');
+      else if(!queuedEvents.some(x=>x[0]==='module_started'))send('module_started');
+      for(const item of queuedEvents.splice(0))send(item[0],item[1]);
+    };
+    tag.onerror=function(){loading=false;console.warn('Webett Academy: analytics script could not be loaded.');};
+    document.head.appendChild(tag);
   }
-  function consentBanner(){
-    if(localStorage.getItem(key)!==null)return;
+  function showConsent(){
+    let saved;
+    try{saved=localStorage.getItem(consentKey);}catch(e){return;}
+    if(saved!==null)return;
     const bar=document.createElement('div');
-    bar.setAttribute('role','region');bar.setAttribute('aria-label','Nastavení analytiky');
+    bar.setAttribute('role','region');
+    bar.setAttribute('aria-label','Nastavení analytiky');
     bar.style.cssText='position:fixed;bottom:12px;left:12px;right:12px;max-width:650px;margin:auto;padding:15px 18px;background:#fff;color:#222;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 22px #0002;z-index:99999;font:14px/1.5 system-ui,sans-serif';
-    const p=document.createElement('p');p.style.margin='0 0 10px';p.textContent='Pomozte nám zlepšovat vzdělávací moduly. S vaším souhlasem budeme měřit souhrnné statistiky používání pomocí Google Analytics. Odmítnutí nijak neomezí výuku.';
-    const buttons=document.createElement('div');buttons.style.cssText='display:flex;gap:10px;flex-wrap:wrap';
+    const p=document.createElement('p');
+    p.style.margin='0 0 10px';
+    p.textContent='Pomozte nám zlepšovat vzdělávací moduly. S vaším souhlasem budeme měřit souhrnné statistiky používání pomocí Google Analytics. Odmítnutí nijak neomezuje výuku.';
+    const buttons=document.createElement('div');
+    buttons.style.cssText='display:flex;gap:10px;flex-wrap:wrap';
     [['Odmítnout','denied'],['Souhlasím','granted']].forEach(([label,value])=>{
-      const btn=document.createElement('button');btn.type='button';btn.textContent=label;
-      btn.style.cssText='cursor:pointer;border:1px solid #774a62;border-radius:7px;padding:8px 14px;background:'+(value==='granted'?'#774a62':'#fff')+';color:'+(value==='granted'?'#fff':'#774a62')+';font:inherit';
-      btn.addEventListener('click',()=>{localStorage.setItem(key,value);bar.remove();if(value==='granted')enable()});
-      buttons.appendChild(btn);
-    });bar.append(p,buttons);document.body.appendChild(bar);
+      const button=document.createElement('button');
+      button.type='button';
+      button.textContent=label;
+      button.style.cssText='cursor:pointer;border:1px solid #774a62;border-radius:7px;padding:8px 14px;background:'+(value==='granted'?'#774a62':'#fff')+';color:'+(value==='granted'?'#fff':'#774a62')+';font:inherit';
+      button.addEventListener('click',function(){
+        try{localStorage.setItem(consentKey,value);}catch(e){return;}
+        bar.remove();
+        if(value==='granted')enable();
+        else queuedEvents.length=0;
+      });
+      buttons.appendChild(button);
+    });
+    bar.append(p,buttons);
+    document.body.appendChild(bar);
   }
-  try{if(localStorage.getItem(key)==='granted')enable();else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',consentBanner,{once:true});else consentBanner();}
-  catch(e){ /* If storage is unavailable, do not track. */ }
+  if(hasConsent())enable();
+  else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showConsent,{once:true});
+  else showConsent();
 })();
 </script>
 </head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
