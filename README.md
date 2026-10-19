@@ -4,16 +4,16 @@ Interaktivní vzdělávací modul pro ambulantní lékaře. Projekt vychází z 
 
 ## Aktuální stav
 
-**Edukační prototyp – NEPUBLIKOVAT jako odborně revidovaný modul.** Odborná recenze a ověření konkrétní ortézy dosud neproběhly. Fiktivní scénář neobsahuje kód konkrétní pomůcky ani úhradu.
+**Obsah schválen odborným referentem 19. 10. 2026.** Klinický případ zůstává ilustrativní a neobsahuje neověřený kód prostředku ani výši úhrady.
 
 ## Spuštění
 
-Projekt je statická aplikace bez build procesu a bez serveru. Otevřete `index.html` v prohlížeči. Pro lokální vývoj můžete využít libovolný statický webový server (např. `python -m http.server 8000`).
+Projekt je React + Vite aplikace. Spuštění: `npm install` a `npm run dev`. Produkční sestavení: `npm run build` (výstup `dist/`). Nasazení na Netlify používá soubor `netlify.toml`.
 
 ## Obsah aplikace
 
 1. Aktuální stav ePoukazu, vzdělávací cíle a životní cyklus.
-2. Modelová preskripce ortézy – 4 rozhodovací kroky.
+2. Srozumitelný průchod vystavením ePoukazu ve 4 výukových krocích.
 3. Komplikace – schválení pojišťovnou, uplatnění a pozdější výdej, technický výpadek.
 4. Závěrečný test – 5 scénářových otázek s vysvětlením.
 
@@ -33,6 +33,4 @@ Primární odkazy na SÚKL, ePreskripci a NZIP jsou umístěny přímo v aplikac
 
 ## Před vydáním
 
-Viz [docs/ODBORNÁ-RECENZE.md](docs/ODBORN%C3%81-RECENZE.md).
-
-Propojení s hlavní Akademií a nasazení na veřejnou doménu až po schválení odborným garantem a dokončení kontroly.
+Záznam odborného obsahového schválení: [docs/ODBORNÁ-RECENZE.md](docs/ODBORN%C3%81-RECENZE.md). Technický build a vizuální kontrola jsou samostatné kroky nasazení.
