@@ -21,7 +21,7 @@
     const bar=document.createElement('div');
     bar.setAttribute('role','region');bar.setAttribute('aria-label','Nastavení analytiky');
     bar.style.cssText='position:fixed;bottom:12px;left:12px;right:12px;max-width:650px;margin:auto;padding:15px 18px;background:#fff;color:#222;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 22px #0002;z-index:99999;font:14px/1.5 system-ui,sans-serif';
-    const p=document.createElement('p');p.style.margin='0 0 10px';p.textContent='Pomozte nám zlepšovat vzdělávací moduly. S vaším souhlasem budeme měřit anonymizované statistiky používání pomocí Google Analytics. Odmítnutí nijak neomezí výuku.';
+    const p=document.createElement('p');p.style.margin='0 0 10px';p.textContent='Pomozte nám zlepšovat vzdělávací moduly. S vaším souhlasem budeme měřit souhrnné statistiky používání pomocí Google Analytics. Odmítnutí nijak neomezí výuku.';
     const buttons=document.createElement('div');buttons.style.cssText='display:flex;gap:10px;flex-wrap:wrap';
     [['Odmítnout','denied'],['Souhlasím','granted']].forEach(([label,value])=>{
       const btn=document.createElement('button');btn.type='button';btn.textContent=label;
