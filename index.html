@@ -1,136 +1,68 @@
 <!doctype html><html lang="cs"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="description" content="Interaktivní průvodce ePoukazem pro lékaře – Webett eHealth Academy"/><title>ePoukaz | Webett eHealth Academy</title><link rel="icon" type="image/svg+xml" href="/webett-symbol.svg"/><script>
-(function(){
+(function () {
   'use strict';
-  const measurementId='G-YLK34M0F9C';
-  const moduleId='EHA-02';
-  const consentKey='webett_academy_analytics_consent';
-  const queuedEvents=[];
-  let loaded=false;
-  let loading=false;
-  let consent=false;
-  function hasConsent(){
-    try{return localStorage.getItem(consentKey)==='granted';}
-    catch(e){return false;}
+  const id = 'G-YLK34M0F9C';
+  const moduleId = 'EHA-02';
+  const consentKey = 'webett_academy_analytics_consent';
+  const pending = [];
+  let active = false;
+  function getConsent() {
+    try { return localStorage.getItem(consentKey); } catch (_) { return null; }
   }
-  function send(event,params){
-    if(!consent || !loaded || typeof window.gtag!=='function')return;
-    window.gtag('event',event,Object.assign({module_id:moduleId},params||{}));
+  function track(name, params) {
+    if (!active || typeof window.gtag !== 'function') return;
+    window.gtag('event', name, Object.assign({module_id: moduleId}, params || {}));
   }
-  window.academyTrack=function(event,params){
-    if(!hasConsent()){
-      // Only keep the initial educational entry until the visitor chooses.
-      if(event==='module_started' && queuedEvents.length===0)queuedEvents.push([event,params]);
-      return;
-    }
-    if(!loaded){
-      if(queuedEvents.length<20)queuedEvents.push([event,params]);
-      return;
-    }
-    send(event,params);
+  window.academyTrack = function (name, params) {
+    if (getConsent() !== 'granted') return;
+    if (!active) { if (pending.length < 20) pending.push([name, params]); return; }
+    track(name, params);
   };
-  function enable(){
-    if(loading||loaded||!hasConsent())return;
-    consent=true;
-    loading=true;
-    window.dataLayer=window.dataLayer||[];
-    window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
-    window.gtag('js',new Date());
-    window.gtag('config',measurementId);
-    const tag=document.createElement('script');
-    tag.async=true;
-    tag.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(measurementId);
-    tag.onload=function(){
-      loaded=true;
-      if(moduleId==='EHA-HUB')send('academy_landing_viewed');
-      else if(!queuedEvents.some(x=>x[0]==='module_started'))send('module_started');
-      for(const item of queuedEvents.splice(0))send(item[0],item[1]);
-    };
-    tag.onerror=function(){loading=false;console.warn('Webett Academy: analytics script could not be loaded.');};
+  function start() {
+    if (active || getConsent() !== 'granted') return;
+    active = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', id, {send_page_view: true});
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
     document.head.appendChild(tag);
+    if (moduleId === 'EHA-HUB') track('academy_landing_viewed');
+    else track('module_started');
+    pending.splice(0).forEach(function (item) {
+      if (item[0] !== 'module_started') track(item[0], item[1]);
+    });
   }
-  function showConsent(){
-    let saved;
-    try{saved=localStorage.getItem(consentKey);}catch(e){return;}
-    if(saved!==null)return;
-    const bar=document.createElement('div');
-    bar.setAttribute('role','region');
-    bar.setAttribute('aria-label','Nastavení analytiky');
-    bar.style.cssText='position:fixed;bottom:12px;left:12px;right:12px;max-width:650px;margin:auto;padding:15px 18px;background:#fff;color:#222;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 22px #0002;z-index:99999;font:14px/1.5 system-ui,sans-serif';
-    const p=document.createElement('p');
-    p.style.margin='0 0 10px';
-    p.textContent='Pomozte nám zlepšovat vzdělávací moduly. S vaším souhlasem budeme měřit souhrnné statistiky používání pomocí Google Analytics. Odmítnutí nijak neomezuje výuku.';
-    const buttons=document.createElement('div');
-    buttons.style.cssText='display:flex;gap:10px;flex-wrap:wrap';
-    [['Odmítnout','denied'],['Souhlasím','granted']].forEach(([label,value])=>{
-      const button=document.createElement('button');
-      button.type='button';
-      button.textContent=label;
-      button.style.cssText='cursor:pointer;border:1px solid #774a62;border-radius:7px;padding:8px 14px;background:'+(value==='granted'?'#774a62':'#fff')+';color:'+(value==='granted'?'#fff':'#774a62')+';font:inherit';
-      button.addEventListener('click',function(){
-        try{localStorage.setItem(consentKey,value);}catch(e){return;}
+  function consentBanner() {
+    if (getConsent() !== null) return;
+    const bar = document.createElement('div');
+    bar.setAttribute('role', 'region');
+    bar.setAttribute('aria-label', 'Nastavení analytiky');
+    bar.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;max-width:650px;margin:auto;padding:15px 18px;background:#fff;color:#222;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 22px #0002;z-index:99999;font:14px/1.5 system-ui,sans-serif';
+    const p = document.createElement('p');
+    p.style.margin = '0 0 10px';
+    p.textContent = 'Pomozte nám zlepšovat vzdělávací moduly. Se souhlasem měříme souhrnné statistiky používání pomocí Google Analytics. Odmítnutí neomezuje výuku.';
+    const buttons = document.createElement('div');
+    buttons.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap';
+    [['Odmítnout','denied'], ['Souhlasím','granted']].forEach(function (choice) {
+      const button = document.createElement('button');
+      button.type = 'button'; button.textContent = choice[0];
+      button.style.cssText = 'cursor:pointer;border:1px solid #774a62;border-radius:7px;padding:8px 14px;background:'+(choice[1]==='granted'?'#774a62':'#fff')+';color:'+(choice[1]==='granted'?'#fff':'#774a62')+';font:inherit';
+      button.addEventListener('click', function () {
+        try { localStorage.setItem(consentKey, choice[1]); } catch (_) { return; }
         bar.remove();
-        if(value==='granted')enable();
-        else queuedEvents.length=0;
+        if (choice[1] === 'granted') start();
       });
       buttons.appendChild(button);
     });
-    bar.append(p,buttons);
+    bar.append(p, buttons);
     document.body.appendChild(bar);
   }
-
-  // Diagnostic interface is visible only when explicitly requested in the URL.
-  // It does not load analytics, send tests, or change consent by itself.
-  if(new URLSearchParams(location.search).get('analytics_debug')==='1'){
-    const diagnostic=document.createElement('aside');
-    diagnostic.setAttribute('aria-label','Diagnostika měření GA4');
-    diagnostic.style.cssText='position:fixed;top:8px;right:8px;max-width:365px;width:calc(100% - 16px);padding:14px;background:#fff;color:#18202b;border:2px solid #774a62;border-radius:12px;z-index:100000;box-shadow:0 4px 24px #0003;font:13px/1.5 system-ui,sans-serif';
-    const heading=document.createElement('strong');heading.textContent='GA4 diagnostika · '+moduleId;
-    const status=document.createElement('pre');status.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0;font:12px/1.55 monospace';
-    const test=document.createElement('button');test.type='button';test.textContent='Odeslat testovací událost';test.style.cssText='padding:8px;border:0;border-radius:6px;background:#774a62;color:white;cursor:pointer';
-    const close=document.createElement('button');close.type='button';close.textContent='Zavřít';close.style.cssText='padding:8px;background:white;border:1px solid #bbb;border-radius:6px;margin-left:7px;cursor:pointer';
-    const note=document.createElement('p');note.textContent='Test lze spustit pouze po souhlasu. Kontrola síťových požadavků může mít zpoždění a neprokazuje přijetí dat v GA4.';
-    diagnostic.append(heading,status,test,close,note);
-    let testState='Test zatím nebyl spuštěn';
-    function refresh(){
-      const entries=performance.getEntriesByType('resource');
-      const collect=entries.filter(x=>x.name.includes('/collect') && (x.name.includes('google-analytics.com') || x.name.includes('analytics.google.com')));
-      const script=entries.filter(x=>x.name.includes('googletagmanager.com/gtag/js'));
-      const lines=[
-        'Souhlas: '+(hasConsent()?'ANO':'NE'),
-        'Skript GA4: '+(loaded?'Načten':loading?'Načítání':'Nenačten'),
-        'gtag funkce: '+(typeof window.gtag==='function'?'Dostupná':'Nedostupná'),
-        'Fronta dataLayer: '+(Array.isArray(window.dataLayer)?window.dataLayer.length:'Nedostupná'),
-        'Požadavky collect viditelné v Resource Timing: '+collect.length,
-        'Skriptové zdroje: '+script.length,
-        'Test: '+testState,
-        'Pozn.: Resource Timing nemusí ukazovat všechny přenosy.'
-      ];
-      status.textContent=lines.join(String.fromCharCode(10));
-    }
-    test.addEventListener('click',function(){
-      if(!hasConsent()){testState='Souhlas nebyl udělen';refresh();return;}
-      if(!loaded){testState='Skript ještě není načten';enable();refresh();return;}
-      testState='Příkaz předán do gtag; čeká se na callback';
-      refresh();
-      window.gtag('event','academy_diagnostic_test',{
-        module_id:moduleId,
-        debug_mode:true,
-        event_callback:function(){
-          testState='Callback gtag proběhl (přijetí serverem není potvrzeno)';
-          refresh();
-        },
-        event_timeout:5000
-      });
-      note.textContent='Pokud callback neproběhne, událost může být blokována. I úspěšný callback je nutné ověřit v GA4 DebugView.';
-    });
-    const update=document.createElement('button');update.type='button';update.textContent='Aktualizovat stav';update.style.cssText='padding:8px;border:1px solid #bbb;border-radius:6px;background:white;cursor:pointer;margin-top:6px';update.addEventListener('click',refresh);diagnostic.appendChild(update);
-    close.addEventListener('click',function(){diagnostic.remove()});
-    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(diagnostic);refresh()},{once:true});
-    else {document.body.appendChild(diagnostic);refresh();}
-  }
-  if(hasConsent())enable();
-  else if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showConsent,{once:true});
-  else showConsent();
+  if (getConsent() === 'granted') start();
+  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', consentBanner, {once:true});
+  else consentBanner();
 })();
 </script>
 </head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
