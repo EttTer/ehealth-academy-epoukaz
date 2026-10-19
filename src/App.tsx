@@ -1,4 +1,5 @@
-import {useState} from "react";
+declare global { interface Window { academyTrack?: (event: string, parameters?: Record<string, string | number>) => void; } }
+import { useState, useEffect, useRef } from "react";
 type Q={q:string;a:string[];correct:number;why:string};
 const tabs=["1. Vystavení","2. Cesta ePoukazu","3. Řešení problémů","4. Znalostní test"];
 const sources=[
@@ -24,6 +25,26 @@ const test:Q[]=[
 export default function App(){
  const [tab,setTab]=useState(0),[step,setStep]=useState(0),[phase,setPhase]=useState(0),[issue,setIssue]=useState(0),[qi,setQi]=useState(0),[testAnswers,setTestAnswers]=useState<Record<number,number>>({}),[done,setDone]=useState(false);
  const score=test.filter((q,i)=>testAnswers[i]===q.correct).length;
+ const analyticsPreviousTab = useRef<string | number | null>(null);
+ const analyticsReportedQuiz = useRef(false);
+ useEffect(() => {
+   const current = String(tab);
+   if (analyticsPreviousTab.current === null) {
+     window.academyTrack?.("module_started");
+   }
+   if (analyticsPreviousTab.current !== current) {
+     window.academyTrack?.("section_viewed", {section_id: current});
+     analyticsPreviousTab.current = current;
+   }
+ }, [tab]);
+ useEffect(() => {
+   if (done && !analyticsReportedQuiz.current) {
+     window.academyTrack?.("quiz_completed", {score: score, total_questions: test.length, score_percent: Math.round(100 * score / test.length)});
+     analyticsReportedQuiz.current = true;
+   }
+   if (!done) analyticsReportedQuiz.current = false;
+ }, [done, score]);
+
  const sourceLink=(i:number)=><a href={sources[i][1]} target="_blank" rel="noreferrer">{sources[i][0]}</a>;
  const options=(q:Q,selected:number|undefined,onPick:(i:number)=>void)=><><div className="answers">{q.a.map((text,i)=><button key={i} disabled={selected!==undefined} onClick={()=>onPick(i)} className={selected!==undefined&&i===q.correct?"correct":selected===i?"incorrect":""}><span>{String.fromCharCode(65+i)}</span>{text}</button>)}</div>{selected!==undefined&&<div className="inset" role="status"><strong>{selected===q.correct?"✓ Správně":"Doporučený postup"}</strong><p>{q.why}</p></div>}</>;
  return <>
