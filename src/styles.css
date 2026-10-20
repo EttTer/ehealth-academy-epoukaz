@@ -153,3 +153,9 @@ a{color:#774a62}
 .academyModuleDropdown summary{display:flex;align-items:center;justify-content:center;gap:12px;line-height:1.25;white-space:nowrap}
 .academyModuleDropdown summary::after{content:"";display:block;width:7px;height:7px;flex:0 0 7px;border-right:2px solid #774a62;border-bottom:2px solid #774a62;transform:translateY(-2px) rotate(45deg)}
 .academyModuleDropdown[open] summary::after{transform:translateY(2px) rotate(225deg)}
+
+/* Standalone map navigation – shared Webett Academy look */
+.academyMapButton{display:inline-flex!important;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:9px;background:#774a62!important;color:#fff!important;text-decoration:none!important;font-size:13px;font-weight:750;line-height:1.25;white-space:nowrap}
+.academyMapButton:hover{background:#613b50!important;color:#fff!important}
+.academyMapButton:focus-visible{outline:3px solid #81abbc;outline-offset:3px}
+@media(max-width:640px){.academyMapButton{min-height:34px;padding:7px 10px;font-size:12px}}
