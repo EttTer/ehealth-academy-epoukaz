@@ -1,53 +1,44 @@
 <!doctype html><html lang="cs"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="description" content="Interaktivní průvodce ePoukazem pro lékaře – Webett eHealth Academy"/><title>ePoukaz | Webett eHealth Academy</title><link rel="icon" type="image/svg+xml" href="/webett-symbol.svg"/><script>
 (function () {
   'use strict';
-  const id = 'G-YLK34M0F9C';
   const moduleId = 'EHA-02';
   const consentKey = 'webett_academy_analytics_consent';
-  const pending = [];
   let active = false;
   function getConsent() {
     try { return localStorage.getItem(consentKey); } catch (_) { return null; }
   }
   function track(name, params) {
-    if (!active || typeof window.gtag !== 'function') return;
-    const details = Object.assign({module_id: moduleId}, params || {});
-    window.gtag('event', name, details);
-    if (typeof window.clarity === 'function') {
-      window.clarity('event', name);
-      window.clarity('set', 'module_id', moduleId);
+    if (!active || typeof window.clarity !== 'function') return;
+    window.clarity('event', name);
+    if (params && name === 'section_viewed' && params.section_id !== undefined) {
+      window.clarity('set', 'section_id', String(params.section_id));
+    }
+    if (params && name === 'quiz_completed') {
+      if (typeof params.score_percent === 'number') {
+        const band = params.score_percent >= 80 ? '80-100' : params.score_percent >= 60 ? '60-79' : '0-59';
+        window.clarity('set', 'quiz_score_band', band);
+        window.clarity('set', 'quiz_score_percent', String(params.score_percent));
+      }
     }
   }
   window.academyTrack = function (name, params) {
     if (getConsent() !== 'granted') return;
-    if (!active) { if (pending.length < 20) pending.push([name, params]); return; }
     track(name, params);
   };
   function start() {
     if (active || getConsent() !== 'granted') return;
     active = true;
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function () { window.dataLayer.push(arguments); };
-    window.gtag('js', new Date());
-    window.gtag('config', id, {send_page_view: true});
-    const tag = document.createElement('script');
-    tag.async = true;
-    tag.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-    document.head.appendChild(tag);
-    // Clarity is initialized only after explicit analytics consent.
     window.clarity = window.clarity || function () {
       (window.clarity.q = window.clarity.q || []).push(arguments);
     };
-    const clarityTag = document.createElement('script');
-    clarityTag.async = true;
-    clarityTag.src = 'https://www.clarity.ms/tag/z0kv6j7evr';
-    document.head.appendChild(clarityTag);
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://www.clarity.ms/tag/z0kv6j7evr';
+    document.head.appendChild(tag);
+    window.clarity('consentv2', {ad_Storage:'denied', analytics_Storage:'granted'});
     window.clarity('set', 'module_id', moduleId);
     if (moduleId === 'EHA-HUB') track('academy_landing_viewed');
     else track('module_started');
-    pending.splice(0).forEach(function (item) {
-      if (item[0] !== 'module_started') track(item[0], item[1]);
-    });
   }
   function consentBanner() {
     if (getConsent() !== null) return;
@@ -57,7 +48,7 @@
     bar.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;max-width:650px;margin:auto;padding:15px 18px;background:#fff;color:#222;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 22px #0002;z-index:99999;font:14px/1.5 system-ui,sans-serif';
     const p = document.createElement('p');
     p.style.margin = '0 0 10px';
-    p.textContent = 'Pomozte nám zlepšovat vzdělávací moduly. Se souhlasem měříme souhrnné statistiky používání pomocí Google Analytics. Odmítnutí neomezuje výuku.';
+    p.textContent = 'Pomozte nám zlepšovat vzdělávací moduly. Se souhlasem měříme používání Akademie pomocí Microsoft Clarity, které umožňuje také záznam interakcí se stránkou. Odmítnutí neomezuje výuku.';
     const buttons = document.createElement('div');
     buttons.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap';
     [['Odmítnout','denied'], ['Souhlasím','granted']].forEach(function (choice) {
