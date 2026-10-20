@@ -11,7 +11,12 @@
   }
   function track(name, params) {
     if (!active || typeof window.gtag !== 'function') return;
-    window.gtag('event', name, Object.assign({module_id: moduleId}, params || {}));
+    const details = Object.assign({module_id: moduleId}, params || {});
+    window.gtag('event', name, details);
+    if (typeof window.clarity === 'function') {
+      window.clarity('event', name);
+      window.clarity('set', 'module_id', moduleId);
+    }
   }
   window.academyTrack = function (name, params) {
     if (getConsent() !== 'granted') return;
@@ -29,6 +34,15 @@
     tag.async = true;
     tag.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
     document.head.appendChild(tag);
+    // Clarity is initialized only after explicit analytics consent.
+    window.clarity = window.clarity || function () {
+      (window.clarity.q = window.clarity.q || []).push(arguments);
+    };
+    const clarityTag = document.createElement('script');
+    clarityTag.async = true;
+    clarityTag.src = 'https://www.clarity.ms/tag/z0kv6j7evr';
+    document.head.appendChild(clarityTag);
+    window.clarity('set', 'module_id', moduleId);
     if (moduleId === 'EHA-HUB') track('academy_landing_viewed');
     else track('module_started');
     pending.splice(0).forEach(function (item) {
