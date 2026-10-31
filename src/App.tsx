@@ -22,6 +22,42 @@ const test:Q[]=[
  {q:"Pacient včas uplatnil poukaz, ale prostředek bude vydán později. Co platí?",a:["Výdej může podle pravidel nastat i po datu platnosti.","Vždy musíte vystavit nový.","Poukaz nelze nikdy použít."],correct:0,why:"Datum platnosti označuje dobu pro uplatnění, nikoli nutně konec výdeje."},
  {q:"Kdy lze vystavit listinný poukaz?",a:["Kdykoliv podle přání pacienta.","Jen při zákonné výjimce a s uvedením důvodu.","Vždy při pomalém AIS."],correct:1,why:"Výjimky mají konkrétní zákonné podmínky."}
 ];
+
+type ModuleRating="yes"|"partial"|"no";
+const ratingKey="webett_eha02_module_rating_v1";
+function ModuleRatingPanel(){
+ const [rating,setRating]=useState<ModuleRating|null>(()=>{
+  try{
+   const saved=sessionStorage.getItem(ratingKey);
+   return saved==="yes"||saved==="partial"||saved==="no"?saved:null;
+  }catch{return null;}
+ });
+ function rateModule(value:ModuleRating){
+  if(rating!==null)return;
+  setRating(value);
+  try{sessionStorage.setItem(ratingKey,value);}catch{}
+  // Respect the existing Clarity consent bridge; no analytics without opt-in.
+  window.academyTrack?.("module_feedback_"+value,{module_id:"EHA-02"});
+ }
+ return (
+<section className="moduleRating" id="hodnoceni-modulu" aria-labelledby="moduleRatingHeading">
+  <div className="moduleRatingText">
+   <span className="eyebrow">Pomozte nám zlepšovat Akademii</span>
+   <h2 id="moduleRatingHeading">Byl pro vás tento modul užitečný?</h2>
+   <p>Stačí jedno kliknutí. Hodnotit můžete i bez absolvování závěrečného testu.</p>
+  </div>
+  {rating===null?
+   <div className="moduleRatingActions" role="group" aria-label="Hodnocení užitečnosti modulu">
+    <button type="button" className="moduleRatingButton" onClick={()=>rateModule("yes")}><span className="moduleRatingSymbol" aria-hidden="true">✓</span><span>Ano</span></button>
+    <button type="button" className="moduleRatingButton" onClick={()=>rateModule("partial")}><span className="moduleRatingSymbol" aria-hidden="true">≈</span><span>Částečně</span></button>
+    <button type="button" className="moduleRatingButton" onClick={()=>rateModule("no")}><span className="moduleRatingSymbol" aria-hidden="true">×</span><span>Ne</span></button>
+   </div>:
+   <div className="moduleRatingThanks" role="status"><span aria-hidden="true">✓</span><div><strong>Děkujeme za zpětnou vazbu.</strong><p>Do souhrnných statistik se odpověď zařadí pouze při povolené analytice.</p></div></div>
+  }
+ </section>
+ );
+}
+
 export default function App(){
  const [tab,setTab]=useState(0),[step,setStep]=useState(0),[phase,setPhase]=useState(0),[issue,setIssue]=useState(0),[qi,setQi]=useState(0),[testAnswers,setTestAnswers]=useState<Record<number,number>>({}),[done,setDone]=useState(false);
  const score=test.filter((q,i)=>testAnswers[i]===q.correct).length;
@@ -67,5 +103,6 @@ export default function App(){
  {tab===2&&<div className="stack"><h2>Co když nastane problém?</h2><p className="muted">Zvolte situaci a podívejte se na doporučený další krok.</p><div className="problemGrid">{issues.map((x,i)=><button key={x.title} onClick={()=>setIssue(i)} className={issue===i?"selected":""} aria-pressed={issue===i}><span className="smallTag">{x.category}</span><span>{x.title}</span></button>)}</div><div className="scenario" aria-live="polite"><span className="eyebrow">PRAKTICKÁ SITUACE · {issues[issue].category.toUpperCase()}</span><h3>{issues[issue].title}</h3><div className="scenarioPart"><h4>Co se stalo?</h4><p>{issues[issue].situation}</p></div><div className="scenarioPart"><h4>Co udělám jako lékař?</h4><p>{issues[issue].action}</p></div><div className="scenarioPart"><h4>Jak to vysvětlím pacientovi?</h4><p><em>„{issues[issue].patient}“</em></p></div><div className="scenarioCaution"><strong>Na co si dát pozor</strong><p>{issues[issue].caution}</p></div><p className="sourceSmall">Podklad: {sourceLink(issues[issue].source)}</p></div><button onClick={()=>{setTab(3);setDone(false);analyticsReportedQuiz.current=false;analyticsReportedResult.current=false;setQi(0);setTestAnswers({})}}>Pokračovat do části 4: Znalostní test →</button></div>}
  {tab===3&&!done&&<div className="stack"><div className="barrow"><div><span className="eyebrow">KRÁTKÝ PRAKTICKÝ TEST</span><h2>Co už víte?</h2></div><small>{qi+1} / {test.length}</small></div><div className="progress">{test.map((_,i)=><i key={i} className={i<=qi?"on":""}/>)}</div><div className="inset"><span className="eyebrow">SITUACE Z ORDINACE</span><h3>{test[qi].q}</h3></div>{options(test[qi],testAnswers[qi],i=>setTestAnswers(a=>({...a,[qi]:i})))}<div className="actions"><button className="secondary" disabled={qi===0} onClick={()=>setQi(i=>i-1)}>← Zpět</button><button disabled={testAnswers[qi]===undefined} onClick={()=>{if(qi===test.length-1){if(!analyticsReportedQuiz.current){window.academyTrack?.("quiz_completed",{score,total_questions:test.length,score_percent:Math.round(100*score/test.length)});analyticsReportedQuiz.current=true;} setDone(true);}else setQi(i=>i+1);}}>{qi===test.length-1?"Zobrazit výsledky →":"Další otázka →"}</button></div></div>}
  {tab===3&&done&&<div className="stack"><div className="success" role="status"><div className="bigIcon">{score===test.length?"★":"✓"}</div><span className="eyebrow">VÝSLEDEK ZNALOSTNÍHO TESTU</span><h2>{score} / {test.length}</h2><p>{score===test.length?"Výborně. Orientujete se v základních procesech.":"Projděte si vysvětlení a podle potřeby si test zopakujte."}</p><p className="muted">Výsledek není odbornou certifikací.</p></div><h3>Vysvětlení odpovědí</h3>{test.map((q,i)=><div className="inset" key={i}><strong>{testAnswers[i]===q.correct?"✓":"✕"} {i+1}. {q.q}</strong><p>{q.why}</p></div>)}<button onClick={()=>{setQi(0);setDone(false);analyticsReportedQuiz.current=false;analyticsReportedResult.current=false;setTestAnswers({})}}>Opakovat test →</button></div>}
- </section><footer><strong>Webett eHealth Academy</strong><p><strong>Klinické testování:</strong> Všechny aktuálně zveřejněné moduly prošly testováním s klinickými lékaři a jejich připomínky byly zapracovány do výukového obsahu.</p><p>Interaktivní výukový průvodce principy ePoukazu, nikoliv kopie skutečného rozhraní ePreskripce či informačního systému ordinace. Není propojen se skutečným eHealth systémem. Nezadávejte osobní nebo zdravotní údaje skutečných pacientů.</p><p>Odborné zdroje: {sources.map((item,i)=><span key={item[1]}>{i>0?" · ":""}{sourceLink(i)}</span>)}</p><div className="releaseMeta"><div><span>Verze aplikace</span><strong>1.0.1</strong></div><div><span>Poslední vydání</span><strong>19. 10. 2026</strong></div><div><span>Odborné ověření</span><strong>19. 10. 2026 – obsah schválen odborným referentem projektu</strong></div></div></footer></main></>;
+ </section>
+ <ModuleRatingPanel/><footer><strong>Webett eHealth Academy</strong><p><strong>Klinické testování:</strong> Všechny aktuálně zveřejněné moduly prošly testováním s klinickými lékaři a jejich připomínky byly zapracovány do výukového obsahu.</p><p>Interaktivní výukový průvodce principy ePoukazu, nikoliv kopie skutečného rozhraní ePreskripce či informačního systému ordinace. Není propojen se skutečným eHealth systémem. Nezadávejte osobní nebo zdravotní údaje skutečných pacientů.</p><p>Odborné zdroje: {sources.map((item,i)=><span key={item[1]}>{i>0?" · ":""}{sourceLink(i)}</span>)}</p><div className="releaseMeta"><div><span>Verze aplikace</span><strong>1.0.1</strong></div><div><span>Poslední vydání</span><strong>19. 10. 2026</strong></div><div><span>Odborné ověření</span><strong>19. 10. 2026 – obsah schválen odborným referentem projektu</strong></div></div></footer></main></>;
 }
