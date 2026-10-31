@@ -159,3 +159,19 @@ a{color:#774a62}
 .academyMapButton:hover{background:#613b50!important;color:#fff!important}
 .academyMapButton:focus-visible{outline:3px solid #81abbc;outline-offset:3px}
 @media(max-width:640px){.academyMapButton{min-height:34px;padding:7px 10px;font-size:12px}}
+
+/* Shared Academy module feedback – same design as EHA-05. */
+.moduleRating{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,.95fr);gap:18px 28px;align-items:center;background:linear-gradient(115deg,#fbf8fa,#f2f7f8);border-top:1px solid #e7dde4;border-bottom:1px solid #e5e9ed;padding:29px 36px 25px}
+.moduleRatingText h2{font-size:22px;color:#313e61;letter-spacing:-.03em;line-height:1.3;margin:9px 0 10px}
+.moduleRatingText p{font-size:14px;line-height:1.7;color:#4a4a4a;max-width:465px}
+.moduleRatingActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.moduleRatingButton{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:92px;padding:12px 8px;border:1px solid #dacbd4;border-radius:13px;background:#fff;color:#313e61;font-size:14px;font-weight:700;box-shadow:0 5px 18px #313e6109}
+.moduleRatingButton:hover{background:#f5ebf1;border-color:#774a62;filter:none!important}
+.moduleRatingButton:focus-visible{outline:3px solid #774a62;outline-offset:3px}
+.moduleRatingSymbol{display:grid;place-items:center;width:30px;height:30px;background:#f3e9ef;border-radius:9px;color:#774a62;font-size:19px;line-height:1}
+.moduleRatingThanks{display:flex;align-items:center;gap:13px;padding:20px;background:#fff;border:1px solid #d6e5e9;border-radius:14px}
+.moduleRatingThanks>span{display:grid;place-items:center;flex:0 0 38px;height:38px;background:#eaf3f5;color:#313e61;border-radius:50%;font-size:20px}
+.moduleRatingThanks strong{color:#313e61;font-size:15px}
+.moduleRatingThanks p{font-size:13px;color:#555;margin-top:4px}
+@media(max-width:740px){.moduleRating{grid-template-columns:1fr;padding:25px 24px;gap:20px}}
+@media(max-width:410px){.moduleRating{padding:22px 18px}.moduleRatingActions{gap:7px}.moduleRatingButton{font-size:12px;min-height:84px}.moduleRatingText h2{font-size:20px}}
