@@ -10,12 +10,12 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     render(<App/>);
     expect(screen.getByRole("heading",{name:"ePoukaz v ordinaci"})).toBeTruthy();
     fireEvent.click(screen.getByRole("button",{name:"2. Cesta ePoukazu"}));
-    fireEvent.click(screen.getByRole("button",{name:"Uplatněný"}));
+    fireEvent.click(screen.getByRole("button",{name:/Uplatněný/}));
     expect(screen.getByText(/Pacient poukaz uplatní u oprávněného výdejce/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button",{name:"3. Řešení problémů"}));
     const scenarios=document.querySelectorAll(".problemGrid button");
     expect(scenarios).toHaveLength(4);
-    fireEvent.click(screen.getByRole("button",{name:"Prostředek není skladem"}));
+    fireEvent.click(screen.getByRole("button",{name:/Prostředek není skladem/}));
     expect(screen.getByText(/Datum platnosti se vztahuje k uplatnění/)).toBeTruthy();
   });
 
