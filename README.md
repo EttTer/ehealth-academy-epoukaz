@@ -1,36 +1,25 @@
-# Webett eHealth Akademie · EHA-02 ePoukaz v ordinaci
+# Webett eHealth Akademie – EHA-02 ePoukaz
 
-Interaktivní vzdělávací modul pro ambulantní lékaře. Projekt vychází z metodiky **Webett eHealth Akademie v1.1 (19. 10. 2026)** a obsahového návrhu EHA-02 v1.2.
+**Web:** https://ehealth-academy-epoukaz.netlify.app/  
+**Účel:** Vystavení ePoukazu, předání identifikátoru, uplatnění, výdej a komplikace v ordinaci. Není to návod pro konkrétní AIS ani systém pro práci s pacientskými daty.
 
-## Aktuální stav
+## Provoz a analytika
+React + TypeScript + Vite, Netlify z `main`; `npm install`, `npm run typecheck`, `npm run build` (publikace `dist`). Závěrečný test je součástí `src/App.tsx`. Při souhlasu Clarity `z0kv6j7evr` s `module_id=EHA-02`: `module_started`, `section_viewed`, `quiz_completed`, `quiz_result_viewed`, dobrovolné `module_feedback_yes/partial/no`. Skóre je štítek relace, nikoli jednoznačný záznam každého testového pokusu.
 
-**Obsah schválen odborným referentem 19. 10. 2026.** Klinický případ zůstává ilustrativní a neobsahuje neověřený kód prostředku ani výši úhrady.
+## Evidence revize
+| Položka | Stav |
+| --- | --- |
+| Verze aplikace | **1.0.1** (`package.json`); obsahový návrh **1.2** |
+| Poslední doložená obsahová kontrola | **19. 10. 2026** |
+| Klinická garance | Odborný referent projektu Webett, rozsah schválení dle [záznamu odborné kontroly](docs/ODBORN%C3%81-RECENZE.md) |
+| Rozsah kontroly | Proces vystavení, návaznost výdeje, scénářové komplikace, test a související odkazy |
+| Externí recenze | V dostupné evidenci **není doložena nezávislá externí recenze** |
+| Uživatelské testování | Formální uživatelská studie nedoložena |
+| Další pravidelná kontrola | **Nejpozději 19. 1. 2027**, při změnách pravidel dříve |
+| Otevřené body | Průběžné ověřování pravidel ePoukazu a zveřejněných příkladů, mobilní a přístupnostní kontrola |
 
-## Spuštění
+## Primární zdroje
+- [SÚKL – pravidla předepisování a výdeje ZP od roku 2026](https://sukl.gov.cz/zdravotnicke-prostredky/otazky-a-odpovedi-zp/pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/)
+- [ePreskripce – informace a časté otázky](https://epreskripce.gov.cz/)
 
-Projekt je React + Vite aplikace. Spuštění: `npm install` a `npm run dev`. Produkční sestavení: `npm run build` (výstup `dist/`). Nasazení na Netlify používá soubor `netlify.toml`.
-
-## Obsah aplikace
-
-1. Aktuální stav ePoukazu, vzdělávací cíle a životní cyklus.
-2. Srozumitelný průchod vystavením ePoukazu ve 4 výukových krocích.
-3. Komplikace – schválení pojišťovnou, uplatnění a pozdější výdej, technický výpadek.
-4. Závěrečný test – 5 scénářových otázek s vysvětlením.
-
-## Metodické zásady
-
-- Primární role: ambulantní lékař.
-- Rozlišovat klinickou indikaci, preskripční omezení a úhradové podmínky.
-- Rozlišovat vystavení, předání identifikátoru, uplatnění a výdej.
-- Jeden samostatný kód na jeden ePoukaz.
-- Výjimky pro listinný předpis pouze v zákonném režimu.
-- Obecný koncept, nikoliv návod k ovládání konkrétního AIS.
-- Žádné reálné osobní či zdravotní údaje, žádná databáze a analytické sledování.
-
-## Zdroje
-
-Primární odkazy na SÚKL, ePreskripci a NZIP jsou umístěny přímo v aplikaci. Poslední obsahová aktualizace: 19. 10. 2026. Doporučená další kontrola: nejpozději 19. 1. 2027.
-
-## Před vydáním
-
-Záznam odborného obsahového schválení: [docs/ODBORNÁ-RECENZE.md](docs/ODBORN%C3%81-RECENZE.md). Technický build a vizuální kontrola jsou samostatné kroky nasazení.
+Technické změny Clarity v listopadu 2026 **nepředstavují novou obsahovou revizi**.
