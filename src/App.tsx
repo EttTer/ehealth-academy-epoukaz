@@ -1,4 +1,4 @@
-declare global { interface Window { academyTrack?: (event: string, parameters?: Record<string, string | number>) => void; } }
+declare global { interface Window { academyTrack?: (event: string, parameters?: Record<string, string | number>) => void; academyAnalyticsReady?: boolean; } }
 import { useState, useEffect, useRef } from "react";
 type Q={q:string;a:string[];correct:number;why:string};
 const tabs=["1. Vystavení","2. Cesta ePoukazu","3. Řešení problémů","4. Znalostní test"];
@@ -73,13 +73,21 @@ export default function App(){
  }, [done, score]);
  useEffect(() => {
    const current = String(tab);
-   if (analyticsPreviousTab.current === null) {
-     window.academyTrack?.("module_started");
-   }
-   if (analyticsPreviousTab.current !== current) {
+   if (window.academyAnalyticsReady && analyticsPreviousTab.current !== current) {
      window.academyTrack?.("section_viewed", {section_id: current});
      analyticsPreviousTab.current = current;
    }
+ }, [tab]);
+ useEffect(() => {
+   const onReady = () => {
+     const current = String(tab);
+     if (analyticsPreviousTab.current !== current) {
+       window.academyTrack?.("section_viewed", {section_id: current});
+       analyticsPreviousTab.current = current;
+     }
+   };
+   window.addEventListener("academy:analytics-ready", onReady);
+   return () => window.removeEventListener("academy:analytics-ready", onReady);
  }, [tab]);
 
 
