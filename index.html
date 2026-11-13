@@ -112,9 +112,19 @@
   window.academyManageConsent = function () { consentBanner(true); };
   function openSettingsFromLink() {
     if (location.hash !== '#nastaveni-analytiky') return;
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.academyManageConsent, {once:true});
-    else window.academyManageConsent();
+    // Consume the deep-link hash, so reloading after a decision won't re-open the banner.
+    history.replaceState(history.state, '', location.pathname + location.search);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { window.academyManageConsent(); }, {once:true});
+    } else window.academyManageConsent();
   }
+  // A link with the same hash does not fire hashchange. Handle every click explicitly.
+  document.addEventListener('click', function (event) {
+    const link = event.target && event.target.closest ? event.target.closest('a[href="#nastaveni-analytiky"]') : null;
+    if (!link) return;
+    event.preventDefault();
+    window.academyManageConsent();
+  });
   openSettingsFromLink();
   window.addEventListener('hashchange', openSettingsFromLink);
   window.addEventListener('focus', function () {
