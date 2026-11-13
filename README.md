@@ -1,6 +1,6 @@
 # Webett eHealth Akademie – EHA-02 ePoukaz
 
-**Web:** https://ehealth-academy-epoukaz.netlify.app/  
+**Web:** https://epoukaz.edu.webett.cz/  
 **Účel:** Vystavení ePoukazu, předání identifikátoru, uplatnění, výdej a komplikace v ordinaci. Není to návod pro konkrétní AIS ani systém pro práci s pacientskými daty.
 
 ## Provoz a analytika
