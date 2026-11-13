@@ -6,6 +6,7 @@
   let active = false;
   // Shared on edu.webett.cz; legacy netlify.app hosts remain origin-local.
   const sharedDomain = 'edu.webett.cz';
+  const migrationKey = 'webett_academy_consent_migrated_v1';
   const shared = location.hostname === sharedDomain || location.hostname.endsWith('.' + sharedDomain);
   function readSharedConsent() {
     const prefix = consentKey + '=';
@@ -24,12 +25,15 @@
   function getConsent() {
     if (shared) {
       const decision = readSharedConsent();
-      if (decision !== null) return decision;
+      if (decision !== null) {
+        try { localStorage.removeItem(consentKey); localStorage.setItem(migrationKey, '1'); } catch (_) {}
+        return decision;
+      }
       let legacy = null;
-      try { legacy = localStorage.getItem(consentKey); } catch (_) {}
+      try { if (localStorage.getItem(migrationKey) !== '1') legacy = localStorage.getItem(consentKey); } catch (_) {}
       if (legacy === 'granted' || legacy === 'denied') {
         if (setConsent(legacy)) {
-          try { localStorage.removeItem(consentKey); } catch (_) {}
+          try { localStorage.removeItem(consentKey); localStorage.setItem(migrationKey, '1'); } catch (_) {}
           return legacy;
         }
       }
