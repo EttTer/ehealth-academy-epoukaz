@@ -1,3 +1,16 @@
+# Permanent redirect of the former Netlify hostname (only this host, not the custom domain).
+[[redirects]]
+  from = "https://ehealth-academy-epoukaz.netlify.app/*"
+  to = "https://epoukaz.edu.webett.cz/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://ehealth-academy-epoukaz.netlify.app/*"
+  to = "https://epoukaz.edu.webett.cz/:splat"
+  status = 301
+  force = true
+
 [build]
   command = "npm run build"
   publish = "dist"
