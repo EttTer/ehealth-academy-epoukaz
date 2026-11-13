@@ -76,7 +76,7 @@
     window.dispatchEvent(new Event('academy:analytics-ready'));
   }
   function consentBanner(force) {
-    if (!force && getConsent() !== null) return;
+    if (force !== true && getConsent() !== null) return;
     if (document.getElementById('academy-consent-banner')) return;
     const bar = document.createElement('div');
     bar.id = 'academy-consent-banner';
@@ -107,7 +107,7 @@
     document.body.appendChild(bar);
   }
   if (getConsent() === 'granted') start();
-  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', consentBanner, {once:true});
+  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { consentBanner(); }, {once:true});
   else consentBanner();
   window.academyManageConsent = function () { consentBanner(true); };
   function openSettingsFromLink() {
