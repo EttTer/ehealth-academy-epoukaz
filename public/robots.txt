@@ -4,4 +4,4 @@ Allow: /
 User-agent: OAI-SearchBot
 Allow: /
 
-Sitemap: https://ehealth-academy-epoukaz.netlify.app/sitemap.xml
+Sitemap: https://epoukaz.edu.webett.cz/sitemap.xml
