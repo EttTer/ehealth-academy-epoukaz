@@ -94,7 +94,29 @@ export default function App(){
  const sourceLink=(i:number)=><a href={sources[i][1]} target="_blank" rel="noreferrer">{sources[i][0]}</a>;
  const options=(q:Q,selected:number|undefined,onPick:(i:number)=>void)=><><div className="answers">{q.a.map((text,i)=><button key={i} disabled={selected!==undefined} onClick={()=>onPick(i)} className={selected!==undefined&&i===q.correct?"correct":selected===i?"incorrect":""}><span>{String.fromCharCode(65+i)}</span>{text}</button>)}</div>{selected!==undefined&&<div className="inset" role="status"><strong>{selected===q.correct?"✓ Správně":"Doporučený postup"}</strong><p>{q.why}</p></div>}</>;
  return <>
- <nav className="academyTopbar" aria-label="Navigace Webett eHealth Academy"><div className="academyTopbarInner"><a className="academyTopbarBrand" href="https://edu.webett.cz/" aria-label="Webett eHealth Academy – úvod"><img src="/webett-logo.svg" alt="" width="140" height="70"/><span className="academyTopbarSubtitle">eHealth<br/>Academy</span></a><div className="academyTopbarLinks"><details className="academyModuleDropdown"><summary>Všechny moduly</summary><div className="academyModuleItems"><a href="https://ezadanka.edu.webett.cz/">eŽádanka</a><a href="/" aria-current="page">ePoukaz</a><a href="https://erecept.edu.webett.cz/">eRecept</a><a href="https://ezkarta.edu.webett.cz/">EZKarta a NPEZ</a><a href="https://ai.edu.webett.cz/">Bezpečná AI</a></div></details><a className="academyMapButton" href="https://mapa.edu.webett.cz/">Mapa souvislostí</a><a href="https://slovnik.edu.webett.cz/">Slovníček</a></div></div></nav>
+ <nav className="wa-masthead" aria-label="Navigace Webett eHealth Akademie">
+  <div className="wa-inner">
+    <a className="wa-brand" href="https://edu.webett.cz/" aria-label="Webett eHealth Akademie – úvod">
+      <img className="wa-logo" src="https://edu.webett.cz/assets/webett-logo.svg" width="140" height="70" alt=""/>
+      <span className="wa-subtitle">eHealth<br/>Academy</span>
+    </a>
+    <div className="wa-links">
+      <details className="wa-dropdown">
+        <summary>Všechny moduly</summary>
+        <div className="wa-options">
+            <a href="https://ezadanka.edu.webett.cz/">eŽádanka</a>
+            <a href="https://epoukaz.edu.webett.cz/" aria-current="page">ePoukaz</a>
+            <a href="https://erecept.edu.webett.cz/">eRecept</a>
+            <a href="https://ezkarta.edu.webett.cz/">EZKarta a NPEZ</a>
+            <a href="https://ai.edu.webett.cz/">Bezpečná AI</a>
+        </div>
+      </details>
+        <a className="wa-map" href="https://mapa.edu.webett.cz/">Mapa souvislostí</a>
+        <a className="wa-link" href="https://slovnik.edu.webett.cz/">Slovníček</a>
+        <a className="wa-guide" href="https://pruvodce.edu.webett.cz/">Průvodce eHealth</a>
+    </div>
+  </div>
+</nav>
  <main className="shell"><header className="hero"><div><h1>ePoukaz v ordinaci</h1><p>Od správné preskripce po předání identifikátoru, uplatnění a výdej pomůcky. Praktický průvodce, nikoliv rozhraní konkrétního AIS.</p></div><div className="heroVisual" aria-hidden="true"><div className="heroFlow"><span>Lékař</span><i>→</i><span>ePoukaz</span><i>→</i><span>Výdejce</span></div><div className="heroFlowSub">Pacient · předpis · návaznost péče</div></div></header>
  <nav className="tabs" aria-label="Části modulu">{tabs.map((name,i)=><button key={name} className={tab===i?"active":""} aria-current={tab===i?"page":undefined} onClick={()=>setTab(i)}>{name}</button>)}</nav>
  <section className="content">
