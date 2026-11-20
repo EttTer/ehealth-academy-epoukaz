@@ -15,7 +15,7 @@ export default function GlossaryTerm({label,slug,definition}:GlossaryTermProps){
  },[open]);
  return <span className="wa-term">
   <button type="button" className="wa-term-toggle" aria-expanded={open} aria-controls={panelId}
-   title={label+" – zobrazit stručné vysvětlení"} onClick={()=>setOpen(value=>!value)}>{label}</button>
+   title={definition} onClick={()=>setOpen(value=>!value)}>{label}</button>
   {open&&<span id={panelId} className="wa-term-popup" role="note">
    <span>{definition}</span>
    <a href={"https://slovnik.edu.webett.cz/#"+slug} target="_blank" rel="noopener noreferrer">Otevřít heslo ve Slovníčku ↗</a>
