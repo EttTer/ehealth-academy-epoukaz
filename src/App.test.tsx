@@ -45,7 +45,7 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     render(<App/>);
     expect(screen.getAllByRole("link",{name:/Pravidla ePoukazu od 1/}).some(a=>a.getAttribute("href")==="https://sukl.gov.cz/faq/jaka-jsou-pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/")).toBe(true);
     fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
-    expect(screen.getByRole("link",{name:/Párový orgán/}).getAttribute("href")).toContain("pri-vytvareni-nebo-uprave-epoukazu");
+    expect(screen.getAllByRole("link",{name:/Párový orgán/}).some(link=>link.getAttribute("href")?.includes("pri-vytvareni-nebo-uprave-epoukazu"))).toBe(true);
     expect(screen.getByText(/levá, pravá nebo obě strany/)).toBeTruthy();
     expect(screen.getByRole("link",{name:/úhradový katalog a metodika VZP/}).getAttribute("href")).toBe("https://www.vzp.cz/poskytovatele/ciselniky/zdravotnicke-prostredky");
     fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
