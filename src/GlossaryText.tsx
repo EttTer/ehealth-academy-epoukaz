@@ -436,6 +436,14 @@ const entries:Entry[]=[
     ]
   },
   {
+    "slug": "nrpzs",
+    "definition": "Národní registr poskytovatelů zdravotních služeb – celostátní evidence poskytovatelů zdravotních služeb v ČR, včetně míst a oborů poskytované péče.",
+    "forms": [
+      "NRPZS",
+      "Národní registr poskytovatelů zdravotních služeb"
+    ]
+  },
+  {
     "slug": "npez",
     "definition": "Portál eZdraví, který slouží jako rozcestník a bezpečný vstup do vybraných českých digitálních zdravotních služeb.",
     "forms": [
