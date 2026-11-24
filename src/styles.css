@@ -175,3 +175,8 @@ a{color:#774a62}
 .moduleRatingThanks p{font-size:13px;color:#555;margin-top:4px}
 @media(max-width:740px){.moduleRating{grid-template-columns:1fr;padding:25px 24px;gap:20px}}
 @media(max-width:410px){.moduleRating{padding:22px 18px}.moduleRatingActions{gap:7px}.moduleRatingButton{font-size:12px;min-height:84px}.moduleRatingText h2{font-size:20px}}
+
+/* EHA-02: readable statutory exception list inside the selected clinical scenario. */
+.legalExceptions{margin:12px 0 0;padding-left:22px;display:grid;gap:10px;color:#313e61;font-size:14px;line-height:1.65}
+.legalExceptions li::marker{color:#774a62}
+.legalExceptions strong{font-weight:750}
