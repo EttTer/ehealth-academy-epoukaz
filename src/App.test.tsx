@@ -6,6 +6,17 @@ import App from "./App";
 afterEach(cleanup);
 
 describe("EHA-02 regression: teaching interactions and question structure",()=>{
+  it("links NRPZS to its exact glossary entry and explains the abbreviation",()=>{
+    render(<App/>);
+    const nrpzs=screen.getByRole("button",{name:"NRPZS"});
+    fireEvent.click(nrpzs);
+    const popup=screen.getByRole("note");
+    expect(popup.textContent).toContain("Národní registr poskytovatelů zdravotních služeb");
+    expect(popup.querySelector("a")?.getAttribute("href")).toBe("https://slovnik.edu.webett.cz/#nrpzs");
+    fireEvent.click(screen.getByRole("button",{name:"Zavřít"}));
+    expect(screen.queryByRole("note")).toBeNull();
+  });
+
   it("opens the lifecycle and the practical problem scenarios",()=>{
     render(<App/>);
     expect(screen.getByRole("heading",{name:"ePoukaz v ordinaci"})).toBeTruthy();
