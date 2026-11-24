@@ -43,16 +43,16 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
 
   it("documents current SÚKL cutoff and required paired-organ field while keeping VZP link",()=>{
     render(<App/>);
-    expect(screen.getByRole("link",{name:/Pravidla ePoukazu od 1\\. 1\\. 2026/}).getAttribute("href")).toBe("https://sukl.gov.cz/faq/jaka-jsou-pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/");
+    expect(screen.getAllByRole("link",{name:/Pravidla ePoukazu od 1/}).some(a=>a.getAttribute("href")==="https://sukl.gov.cz/faq/jaka-jsou-pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/")).toBe(true);
     fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
     expect(screen.getByRole("link",{name:/Párový orgán/}).getAttribute("href")).toContain("pri-vytvareni-nebo-uprave-epoukazu");
     expect(screen.getByText(/levá, pravá nebo obě strany/)).toBeTruthy();
     expect(screen.getByRole("link",{name:/úhradový katalog a metodika VZP/}).getAttribute("href")).toBe("https://www.vzp.cz/poskytovatele/ciselniky/zdravotnicke-prostredky");
     fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
-    fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
-    expect(screen.getByText(/změna k 31\\. 12\\. 2026/)).toBeTruthy();
-    expect(screen.getByText(/vypnuta starší rozhraní ePoukazu/)).toBeTruthy();
-    expect(screen.queryByText(/30\\. listopadu 2026/)).toBeNull();
+    fireEvent.click(screen.getByRole("button",{name:"Shrnout hlavní pravidla →"}));
+    const cutoff=screen.getByText(/změna k 31/).closest(".notice");
+    expect(cutoff?.textContent).toContain("vypnuta starší rozhraní ePoukazu");
+    expect(cutoff?.textContent).not.toContain("30. listopadu 2026");
   });
 
   it("explains insurer approval once, only in the initial lifecycle phase",()=>{
