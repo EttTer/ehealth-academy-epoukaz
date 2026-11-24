@@ -41,13 +41,29 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     expect(screen.getByRole("link",{name:/úhradový katalog a metodika VZP/}).getAttribute("href")).toContain("zdravotnicke-prostredky");
   });
 
+  it("documents current SÚKL cutoff and required paired-organ field while keeping VZP link",()=>{
+    render(<App/>);
+    expect(screen.getByRole("link",{name:/Pravidla ePoukazu od 1\\. 1\\. 2026/}).getAttribute("href")).toBe("https://sukl.gov.cz/faq/jaka-jsou-pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/");
+    fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
+    expect(screen.getByRole("link",{name:/Párový orgán/}).getAttribute("href")).toContain("pri-vytvareni-nebo-uprave-epoukazu");
+    expect(screen.getByText(/levá, pravá nebo obě strany/)).toBeTruthy();
+    expect(screen.getByRole("link",{name:/úhradový katalog a metodika VZP/}).getAttribute("href")).toBe("https://www.vzp.cz/poskytovatele/ciselniky/zdravotnicke-prostredky");
+    fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
+    fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
+    expect(screen.getByText(/změna k 31\\. 12\\. 2026/)).toBeTruthy();
+    expect(screen.getByText(/vypnuta starší rozhraní ePoukazu/)).toBeTruthy();
+    expect(screen.queryByText(/30\\. listopadu 2026/)).toBeNull();
+  });
+
   it("explains insurer approval once, only in the initial lifecycle phase",()=>{
     render(<App/>);
     fireEvent.click(screen.getByRole("button",{name:"2. Cesta ePoukazu"}));
     expect(screen.getAllByText("Co když je třeba souhlas pojišťovny?")).toHaveLength(1);
     expect(document.querySelectorAll(".approvalStep")).toHaveLength(4);
-    expect(screen.getByText("Odešlu ePoukaz ke schválení")).toBeTruthy();
+    expect(screen.getByText("Vystavím ePoukaz ke schválení")).toBeTruthy();
     expect(screen.getByText("Pojišťovna rozhodne")).toBeTruthy();
+    expect(Array.from(document.querySelectorAll(".approvalStep strong")).map(x=>x.textContent)).toEqual(["Vystavím ePoukaz ke schválení","Případně se doplní podklady z výdejny","Pojišťovna rozhodne","Výdej až po schválení"]);
+    expect(screen.getByText(/teprve po dodání podkladů jde ePoukaz k posouzení pojišťovnou/)).toBeTruthy();
     expect(screen.getByText("Výdej až po schválení")).toBeTruthy();
     expect(screen.getByText(/platnost alespoň 90 dní/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button",{name:/Uplatněný/}));
