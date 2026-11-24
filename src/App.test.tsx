@@ -45,7 +45,11 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     render(<App/>);
     fireEvent.click(screen.getByRole("button",{name:"2. Cesta ePoukazu"}));
     expect(screen.getAllByText("Co když je třeba souhlas pojišťovny?")).toHaveLength(1);
-    expect(screen.getByText(/Čeká na podklady z výdejny/)).toBeTruthy();
+    expect(document.querySelectorAll(".approvalStep")).toHaveLength(4);
+    expect(screen.getByText("Odešlu ePoukaz ke schválení")).toBeTruthy();
+    expect(screen.getByText("Pojišťovna rozhodne")).toBeTruthy();
+    expect(screen.getByText("Výdej až po schválení")).toBeTruthy();
+    expect(screen.getByText(/platnost alespoň 90 dní/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button",{name:/Uplatněný/}));
     expect(screen.queryByText("Co když je třeba souhlas pojišťovny?")).toBeNull();
     fireEvent.click(screen.getByRole("button",{name:/Vydaný/}));
@@ -58,11 +62,15 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     render(<App/>);
     fireEvent.click(screen.getByRole("button",{name:"3. Řešení problémů"}));
     fireEvent.click(screen.getByRole("button",{name:/Závažný technický výpadek/}));
-    expect(document.querySelector(".scenario")?.textContent).toContain("bezodkladnou potřebu předpisu");
+    expect(document.querySelectorAll(".exceptionChecklist li")).toHaveLength(2);
+    expect(document.querySelector(".scenario")?.textContent).toContain("Pacient pomůcku potřebuje bezodkladně");
+    expect(document.querySelector(".scenarioPart")?.textContent).not.toContain("§ 28a");
     fireEvent.click(screen.getByRole("button",{name:/Jiný zákonný důvod papírového poukazu/}));
-    expect(document.querySelector(".scenario")?.textContent).toContain("manželovi či partnerovi");
-    expect(document.querySelector(".scenario")?.textContent).toContain("vlastním sociálním prostředí");
+    expect(document.querySelector(".scenario")?.textContent).toContain("Zvláštní poukaz pro sebe nebo blízkou osobu");
+    expect(document.querySelector(".scenario")?.textContent).toContain("Péče u pacienta doma");
     expect(document.querySelectorAll(".legalExceptions li")).toHaveLength(3);
+    expect(document.querySelector(".scenarioPart")?.textContent).not.toContain("§ 28a");
+    expect(document.querySelector(".scenario")?.textContent).toContain("Papírovou variantu lze použít jen ve výjimečných případech");
     expect(screen.getAllByRole("link",{name:/Zákon č. 375\/2022/}).some(a=>a.getAttribute("href")?.includes("#p28a"))).toBe(true);
   });
 
