@@ -107,7 +107,7 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
       expect(Math.max(...sizes)/Math.min(...sizes)).toBeLessThanOrEqual(1.25);
       expect(Math.min(...sizes)).toBeGreaterThanOrEqual(80);
       fireEvent.click(options[correctIndices[i]]);
-      expect(screen.getByText(/Správně/)).toBeTruthy();
+      expect(screen.getByText("✓ Správně")).toBeTruthy();
       const explanations=Array.from(document.querySelectorAll(".answers + .inset p"));
       expect(explanations).toHaveLength(3);
       explanations.forEach((node,j)=>expect(node.textContent).toContain(test[i].why[j]));
