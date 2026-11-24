@@ -85,7 +85,7 @@ export const test:Q[]=[
   {
     "q": "Pacient nemá mobil ani e-mail. Na ePoukazu je pomůcka, u níž se ještě čeká na schválení úhrady pojišťovnou. Jak mu poradíte?",
     "a": [
-      "Vytisknu průvodku; pacient může řešit podklady ve výdejně, ale výdej na úhradu vyžaduje souhlas.",
+      "Vytisknu průvodku; pacient může získat identifikátor před schválením, výdej na úhradu vyžaduje souhlas.",
       "Vysvětlím, že bez mobilu může ePoukaz využít až po schválení a vystavení nového identifikátoru.",
       "Předám průvodku; pokud ji výdejna přijme, znamená to, že lze pomůcku vydat na úhradu."
     ],
