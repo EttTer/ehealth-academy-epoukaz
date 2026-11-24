@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import {afterEach,describe,expect,it} from "vitest";
 import {cleanup,fireEvent,render,screen} from "@testing-library/react";
-import App from "./App";
+import App,{test} from "./App";
 
 afterEach(cleanup);
 
@@ -93,7 +93,7 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
   it("checks all five 3-option questions, correct scoring and repeat",()=>{
     render(<App/>);
     fireEvent.click(screen.getByRole("button",{name:"4. Znalostní test"}));
-    const correctIndices=[0,1,2,0,1] as const;
+    const correctIndices=[1,0,2,1,0] as const;
     const seen=new Set<string>();
     for(let i=0;i<correctIndices.length;i++){
       const prompt=screen.getByRole("heading",{level:3}).textContent||"";
@@ -102,13 +102,33 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
       const options=Array.from(document.querySelectorAll<HTMLButtonElement>(".answers button"));
       expect(options).toHaveLength(3);
       expect(new Set(options.map(b=>b.textContent))).toHaveProperty("size",3);
+      expect(test[i].why).toHaveLength(3);
+      const sizes=test[i].a.map(text=>text.length);
+      expect(Math.max(...sizes)/Math.min(...sizes)).toBeLessThanOrEqual(1.25);
+      expect(Math.min(...sizes)).toBeGreaterThanOrEqual(80);
       fireEvent.click(options[correctIndices[i]]);
       expect(screen.getByText(/Správně/)).toBeTruthy();
+      const explanations=Array.from(document.querySelectorAll(".answers + .inset p"));
+      expect(explanations).toHaveLength(3);
+      explanations.forEach((node,j)=>expect(node.textContent).toContain(test[i].why[j]));
       fireEvent.click(screen.getByRole("button",{name:i===4?/Zobrazit výsledky/:/Další otázka/}));
     }
     expect(seen.size).toBe(5);
     expect(screen.getByRole("heading",{name:"5 / 5"})).toBeTruthy();
     fireEvent.click(screen.getByRole("button",{name:/Opakovat test/}));
     expect(screen.getByRole("heading",{name:"Co už víte?"})).toBeTruthy();
+  });
+  it("explains all choices after a realistic wrong clinical decision",()=>{
+    render(<App/>);
+    fireEvent.click(screen.getByRole("button",{name:"4. Znalostní test"}));
+    const answers=Array.from(document.querySelectorAll<HTMLButtonElement>(".answers button"));
+    expect(test[0].correct).toBe(1);
+    fireEvent.click(answers[0]);
+    expect(screen.getByText("Doporučený postup")).toBeTruthy();
+    const reasons=Array.from(document.querySelectorAll(".answers + .inset p"));
+    expect(reasons).toHaveLength(3);
+    reasons.forEach((r,i)=>expect(r.textContent).toContain(test[0].why[i]));
+    expect(answers[0].className).toContain("incorrect");
+    expect(answers[1].className).toContain("correct");
   });
 });
