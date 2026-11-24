@@ -19,6 +19,41 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     expect(screen.getByText(/Datum platnosti se vztahuje k uplatnění/)).toBeTruthy();
   });
 
+
+  it("shows access, authoritative reimbursement lists and a clear prescribing workflow",()=>{
+    render(<App/>);
+    expect(screen.getByText("Kde ePoukaz vystavím?")).toBeTruthy();
+    expect(screen.getByRole("link",{name:/aplikaci eRecept Profesionál/}).getAttribute("href")).toContain("mobilni-a-webove-aplikace");
+    expect(screen.getByRole("link",{name:/návodu SÚKL/}).getAttribute("href")).toContain("jak-pouzivat-epoukaz");
+    fireEvent.click(screen.getByRole("button",{name:"Pokračovat →"}));
+    expect(screen.getByRole("link",{name:/aktuální Seznam ZP SÚKL/}).getAttribute("href")).toContain("seznamy-zdravotnickych-prostredku");
+    expect(screen.getByRole("link",{name:/úhradový katalog a metodika VZP/}).getAttribute("href")).toContain("zdravotnicke-prostredky");
+  });
+
+  it("explains insurer approval once, only in the initial lifecycle phase",()=>{
+    render(<App/>);
+    fireEvent.click(screen.getByRole("button",{name:"2. Cesta ePoukazu"}));
+    expect(screen.getAllByText("Co když je třeba souhlas pojišťovny?")).toHaveLength(1);
+    expect(screen.getByText(/Čeká na podklady z výdejny/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button",{name:/Uplatněný/}));
+    expect(screen.queryByText("Co když je třeba souhlas pojišťovny?")).toBeNull();
+    fireEvent.click(screen.getByRole("button",{name:/Vydaný/}));
+    expect(screen.queryByText("Co když je třeba souhlas pojišťovny?")).toBeNull();
+    fireEvent.click(screen.getByRole("button",{name:/Vystavený/}));
+    expect(screen.getAllByText("Co když je třeba souhlas pojišťovny?")).toHaveLength(1);
+  });
+
+  it("distinguishes §28a paper exceptions and the urgency condition",()=>{
+    render(<App/>);
+    fireEvent.click(screen.getByRole("button",{name:"3. Řešení problémů"}));
+    fireEvent.click(screen.getByRole("button",{name:/Závažný technický výpadek/}));
+    expect(document.querySelector(".scenario")?.textContent).toContain("bezodkladnou potřebu předpisu");
+    fireEvent.click(screen.getByRole("button",{name:/Jiný zákonný důvod papírového poukazu/}));
+    expect(document.querySelector(".scenario")?.textContent).toContain("stanovené blízké osoby");
+    expect(document.querySelector(".scenario")?.textContent).toContain("vlastním sociálním prostředí");
+    expect(screen.getByRole("link",{name:/Zákon č. 375\/2022/}).getAttribute("href")).toContain("#p28a");
+  });
+
   it("checks all five 3-option questions, correct scoring and repeat",()=>{
     render(<App/>);
     fireEvent.click(screen.getByRole("button",{name:"4. Znalostní test"}));
