@@ -49,8 +49,9 @@ describe("EHA-02 regression: teaching interactions and question structure",()=>{
     fireEvent.click(screen.getByRole("button",{name:/Závažný technický výpadek/}));
     expect(document.querySelector(".scenario")?.textContent).toContain("bezodkladnou potřebu předpisu");
     fireEvent.click(screen.getByRole("button",{name:/Jiný zákonný důvod papírového poukazu/}));
-    expect(document.querySelector(".scenario")?.textContent).toContain("stanovené blízké osoby");
+    expect(document.querySelector(".scenario")?.textContent).toContain("manželovi či partnerovi");
     expect(document.querySelector(".scenario")?.textContent).toContain("vlastním sociálním prostředí");
+    expect(document.querySelectorAll(".legalExceptions li")).toHaveLength(3);
     expect(screen.getAllByRole("link",{name:/Zákon č. 375\/2022/}).some(a=>a.getAttribute("href")?.includes("#p28a"))).toBe(true);
   });
 
