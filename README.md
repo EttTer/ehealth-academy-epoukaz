@@ -9,7 +9,7 @@ React + TypeScript + Vite, Netlify z `main`; `npm install`, `npm run typecheck`,
 ## Evidence revize
 | Položka | Stav |
 | --- | --- |
-| Verze aplikace | **1.0.7** (`package.json`); obsahový návrh **1.2** |
+| Verze aplikace | **1.0.8** (`package.json`); obsahový návrh **1.2** |
 | Poslední doložená obsahová kontrola | **19. 10. 2026** – původní písemný záznam; následné klinické iterace viz níže |
 | Klinická garance | Odborný referent projektu Webett, rozsah schválení dle [záznamu odborné kontroly](docs/ODBORN%C3%81-RECENZE.md) |
 | Rozsah kontroly | Proces vystavení, návaznost výdeje, scénářové komplikace, test a související odkazy |
@@ -43,3 +43,10 @@ Zkratka NRPZS v části „Kde ePoukaz vystavím?“ je nyní klikací a vysvět
 - Při vystavení doplněna jedna věta k povinnému údaji **Párový orgán** u vybraných prostředků, s [oficiálním zdrojem](https://epreskripce.gov.cz/pri-vytvareni-nebo-uprave-epoukazu-lze-vyplnit-udaj-parovy-organ-kterym-se-urcuje-zda-je-zdravotnicky-prostredek-predepsan-pro-levou-stranu-pravou-stranu-nebo-obe-strany-tela/).
 - Primární odkaz na obecnou stránku pravidel nahrazen přímým FAQ SÚKL, obecná stránka číselníků VZP ponechána kvůli aktualizacím.
 - Beze změny: pět testových otázek, konfigurace analytiky, hlavní grafika a struktura.
+
+
+## Iterace 24. 11. 2026 – znalostní test v1.0.8
+
+Pět otázek bylo nahrazeno klinickými miniscénáři po iteraci ePoukazu. Témata: preskripční omezení a párový orgán; podklady výdejny před schválením pojišťovny; uplatnění versus pozdější výdej; technický výpadek a podmínky listinné výjimky; průvodka pro pacienta bez mobilu při čekání na souhlas pojišťovny. Každá otázka nabízí tři **podobně dlouhé** a věrohodné volby. Po výběru se vysvětluje každá možnost A/B/C, stejně jako v EHA-03 eRecept. Součástí regresních testů je limit délkové nevyváženosti odpovědí (poměr nejdelší/nejkratší ≤ 1,25), pět rozhodnutí, vysvětlení a restart.
+
+Zachováno: původní čtyři výukové záložky, klinické scénáře mimo test, pravidla skórování a analytické události. Revize vychází z klinických připomínek; nové znění testových otázek je připraveno k praktickému ověření.
