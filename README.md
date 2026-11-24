@@ -9,14 +9,14 @@ React + TypeScript + Vite, Netlify z `main`; `npm install`, `npm run typecheck`,
 ## Evidence revize
 | Položka | Stav |
 | --- | --- |
-| Verze aplikace | **1.0.3** (`package.json`); obsahový návrh **1.2** |
+| Verze aplikace | **1.0.4** (`package.json`); obsahový návrh **1.2** |
 | Poslední doložená obsahová kontrola | **19. 10. 2026** |
 | Klinická garance | Odborný referent projektu Webett, rozsah schválení dle [záznamu odborné kontroly](docs/ODBORN%C3%81-RECENZE.md) |
 | Rozsah kontroly | Proces vystavení, návaznost výdeje, scénářové komplikace, test a související odkazy |
 | Externí recenze | V dostupné evidenci **není doložena nezávislá externí recenze** |
 | Uživatelské testování | Formální uživatelská studie nedoložena |
 | Další pravidelná kontrola | **Nejpozději 19. 1. 2027**, při změnách pravidel dříve |
-| Otevřené body | Průběžné ověřování pravidel ePoukazu a zveřejněných příkladů, mobilní a přístupnostní kontrola |
+| Iterace 24. 11. 2026 | Doplněn klinický postup vystavení ePoukazu a kontroly preskripce a úhrady, zpřesněn schvalovací proces a § 28a; čeká na klinické znovuověření. |\n| Otevřené body | Průběžné ověřování pravidel ePoukazu a zveřejněných příkladů, mobilní a přístupnostní kontrola |
 
 ## Primární zdroje
 - [SÚKL – pravidla předepisování a výdeje ZP od roku 2026](https://sukl.gov.cz/zdravotnicke-prostredky/otazky-a-odpovedi-zp/pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/)
