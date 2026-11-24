@@ -9,7 +9,7 @@ React + TypeScript + Vite, Netlify z `main`; `npm install`, `npm run typecheck`,
 ## Evidence revize
 | Položka | Stav |
 | --- | --- |
-| Verze aplikace | **1.0.5** (`package.json`); obsahový návrh **1.2** |
+| Verze aplikace | **1.0.6** (`package.json`); obsahový návrh **1.2** |
 | Poslední doložená obsahová kontrola | **19. 10. 2026** |
 | Klinická garance | Odborný referent projektu Webett, rozsah schválení dle [záznamu odborné kontroly](docs/ODBORN%C3%81-RECENZE.md) |
 | Rozsah kontroly | Proces vystavení, návaznost výdeje, scénářové komplikace, test a související odkazy |
@@ -31,3 +31,7 @@ Vysvětlující pasáže a některé modelové situace umožňují po kliknutí 
 ## Doplnění Slovníčku 24. 11. 2026
 
 Zkratka NRPZS v části „Kde ePoukaz vystavím?“ je nyní klikací a vysvětluje Národní registr poskytovatelů zdravotních služeb s přímým odkazem na `https://slovnik.edu.webett.cz/#nrpzs`. Jde o edukační a navigační změnu; testové otázky zůstaly beze změny.
+
+## Iterace 24. 11. 2026 – srozumitelnost v1.0.6
+
+Čtyři kroky schvalování pojišťovnou jsou zobrazeny odděleně se stručným textem, včetně upozornění na platnost a původní zdroje. Praktické situace listinného poukazu používají jednoduché podmínky a příklady; podrobné odkazy na § 28a a SÚKL zůstávají ve zdrojích pod scénářem. Stávající klinická logika, testové otázky a analytika se nemění. Nové znění je určeno k navazující klinické revizi.
