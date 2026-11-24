@@ -2,7 +2,7 @@ import GlossaryText from "./GlossaryText";
 import GlossaryTerm from "./GlossaryTerm";
 declare global { interface Window { academyTrack?: (event: string, parameters?: Record<string, string | number>) => void; academyAnalyticsReady?: boolean; } }
 import { useState, useEffect, useRef } from "react";
-type Q={q:string;a:string[];correct:number;why:string};
+type Q={q:string;a:string[];correct:number;why:string[]};
 const tabs=["1. Vystavení","2. Cesta ePoukazu","3. Řešení problémů","4. Znalostní test"];
 const sources=[
  ["Pravidla ePoukazu od 1. 1. 2026","https://sukl.gov.cz/faq/jaka-jsou-pravidla-pro-predepisovani-a-vydej-zdravotnickych-prostredku-od-1-1-2026/"],
@@ -25,12 +25,77 @@ const issues=[
  {title:"Závažný technický výpadek",category:"Bezpečnost",situation:"Závažná porucha neumožňuje elektronický poukaz vystavit.",action:"Při technickém výpadku posuďte, zda současně platí obě podmínky:",patient:"Elektronický systém nefunguje. Ověřím, zda je vzhledem k vašemu zdravotnímu stavu možné vystavit poukaz výjimečně na papíře.",caution:"Samotný výpadek ani nefunkční či zastaralý AIS nestačí. Rozhodující je také neodkladná potřeba předpisu.",source:9},
  {title:"Jiný zákonný důvod papírového poukazu",category:"Výjimky",situation:"Pacient se ptá, zda si může běžně vyžádat papírový poukaz.",action:"Papírový poukaz nelze vystavit jen na přání pacienta. Je možný pouze v některé z těchto výjimek:",patient:"Standardně se vystavuje ePoukaz. Papírovou variantu lze použít jen ve výjimečných případech.",caution:"Samotné přání pacienta nestačí. Při návštěvě doma i při výpadku musí být předpis neodkladný. Přesný rozsah výjimek je v odkazovaných pravidlech.",source:9}
 ];
-const test:Q[]=[
- {q:"Pacient nemá mobil ani e-mail. Jak mu předat ePoukaz?",a:["Vytištěnou průvodkou.","Není to možné.","Pouze přes aplikaci."],correct:0,why:"Průvodka s identifikátorem je přípustný způsob předání."},
- {q:"Lze na jeden ePoukaz uvést dva různé kódy zdravotnických prostředků?",a:["Ano, jsou-li související.","Ne; jedna samostatně kódovaná položka na jeden ePoukaz.","Ano, při stejné diagnóze."],correct:1,why:"Pro každý samostatný kód je potřeba odpovídající poukaz."},
- {q:"Co znamená dožádání informací od pojišťovny?",a:["Poukaz je schválen.","Poukaz se automaticky mění na listinný.","Předepisující doplní informace a poukaz znovu předá."],correct:2,why:"Dožádání není schválení."},
- {q:"Pacient včas uplatnil poukaz, ale prostředek bude vydán později. Co platí?",a:["Výdej může podle pravidel nastat i po datu platnosti.","Vždy musíte vystavit nový.","Poukaz nelze nikdy použít."],correct:0,why:"Datum platnosti označuje dobu pro uplatnění, nikoli nutně konec výdeje."},
- {q:"Kdy lze vystavit listinný poukaz?",a:["Kdykoliv podle přání pacienta.","Jen při zákonné výjimce a s uvedením důvodu.","Vždy při pomalém AIS."],correct:1,why:"Výjimky mají konkrétní zákonné podmínky."}
+export const test:Q[]=[
+  {
+    "q": "Pacientovi po úrazu hlezna předepisujete ortézu. AIS nabízí konkrétní kód, ale u prostředku je požadován údaj „Párový orgán“. Jak postupujete?",
+    "a": [
+      "Vyberu kód z AIS a doplním stranu těla; úhradové podmínky prověřím až při případném zamítnutí.",
+      "Ověřím indikaci a preskripční podmínky, doplním správnou stranu těla a poté poukaz odešlu.",
+      "Zvolím obdobný kód bez požadavku na párovost, pokud jde o ortézu se stejným klinickým účelem."
+    ],
+    "correct": 1,
+    "why": [
+      "Zobrazení v AIS neprokazuje splnění preskripčních a úhradových podmínek; kontrola patří před odeslání.",
+      "Správně: klinická vhodnost, aktuální omezení a povinná strana těla se kontrolují před vystavením.",
+      "Podobnost pomůcek neopravňuje k záměně kódu kvůli obejití povinného údaje."
+    ]
+  },
+  {
+    "q": "Pacient potřebuje individuálně zhotovovanou pomůcku, která podléhá schválení pojišťovnou. Výdejna musí nejprve doplnit zaměření a kalkulaci. Co dál?",
+    "a": [
+      "Pacientovi předám průvodku pro výdejnu, která doplní podklady; výdej na úhradu počká na souhlas.",
+      "Počkám na schválení pojišťovnou a až poté pacientovi předám průvodku k zaměření ve výdejně.",
+      "Předám průvodku a výdejně sdělím, že po zaměření může pomůcku vydat bez dalšího potvrzení."
+    ],
+    "correct": 0,
+    "why": [
+      "Správně: u této větve může výdejna připravit podklady před schválením; na úhradu se vydává až po souhlasu.",
+      "V případech s podklady z výdejny může pojišťovna rozhodnout až po jejich doplnění.",
+      "Uplatnění před schválením není totéž co souhlas pojišťovny ani povolení výdeje na její úhradu."
+    ]
+  },
+  {
+    "q": "Výdejna uplatnila ePoukaz ještě v době jeho platnosti, ale pomůcku dodá až po jejím uplynutí. Jaký je nejvhodnější postup?",
+    "a": [
+      "Po skončení platnosti vystavím nový ePoukaz, protože původní už není možné použít k výdeji.",
+      "Prodloužím platnost původního poukazu; bez prodloužení není pozdější výdej přípustný.",
+      "Prověřím uplatnění u výdejny a nevystavím automaticky nový poukaz; výdej může být pozdější."
+    ],
+    "correct": 2,
+    "why": [
+      "Včasné uplatnění může umožnit pozdější vydání; duplicitní předpis by nemusel být potřeba.",
+      "Po uplatnění se platnost neposuzuje stejně jako u dosud neuplatněného poukazu.",
+      "Správně: rozhodující je, zda byl poukaz řádně a včas uplatněn, nikoli samotný den dodání."
+    ]
+  },
+  {
+    "q": "Při akutní péči nefunguje internet ani dostupná náhradní elektronická cesta. Pacient pomůcku potřebuje bezodkladně. Co uděláte?",
+    "a": [
+      "Vystavím listinný poukaz bez zdůvodnění, protože technická porucha je sama dostatečným důvodem.",
+      "Vystavím listinný poukaz s uvedením důvodu, protože předepsání nesnese odklad a elektronická cesta není možná.",
+      "Odložím vystavení do obnovení systému, protože bez elektronického odeslání není předpis přípustný."
+    ],
+    "correct": 1,
+    "why": [
+      "Samotná porucha nestačí; splněnou zákonnou výjimku je také nutné na listinném poukazu zdůvodnit.",
+      "Správně: současně musí být technická překážka a bezodkladná potřeba předpisu; důvod se uvádí.",
+      "Zákon připouští listinnou výjimku při splnění podmínek, není vždy nutné vyčkat na obnovení."
+    ]
+  },
+  {
+    "q": "Pacient nemá mobil ani e-mail. Na ePoukazu je pomůcka, u níž se ještě čeká na schválení úhrady pojišťovnou. Jak mu poradíte?",
+    "a": [
+      "Vytisknu průvodku; pacient může řešit podklady ve výdejně, ale výdej na úhradu vyžaduje souhlas.",
+      "Vysvětlím, že bez mobilu může ePoukaz využít až po schválení a vystavení nového identifikátoru.",
+      "Předám průvodku; pokud ji výdejna přijme, znamená to, že lze pomůcku vydat na úhradu."
+    ],
+    "correct": 0,
+    "why": [
+      "Správně: aplikace není nutná a předání identifikátoru není schválením úhrady ani výdejem.",
+      "Pacient může dostat průvodku i před schválením; nová identifikace kvůli nepřítomnosti mobilu není nutná.",
+      "Přijetí či uplatnění poukazu není souhlas pojišťovny a neopravňuje k výdeji na její úhradu."
+    ]
+  }
 ];
 
 type ModuleRating="yes"|"partial"|"no";
@@ -116,7 +181,7 @@ export default function App(){
 
 
  const sourceLink=(i:number)=><a href={sources[i][1]} target="_blank" rel="noreferrer">{sources[i][0]}</a>;
- const options=(q:Q,selected:number|undefined,onPick:(i:number)=>void)=><><div className="answers">{q.a.map((text,i)=><button key={i} disabled={selected!==undefined} onClick={()=>onPick(i)} className={selected!==undefined&&i===q.correct?"correct":selected===i?"incorrect":""}><span>{String.fromCharCode(65+i)}</span>{text}</button>)}</div>{selected!==undefined&&<div className="inset" role="status"><strong>{selected===q.correct?"✓ Správně":"Doporučený postup"}</strong><p><GlossaryText text={q.why}/></p></div>}</>;
+ const options=(q:Q,selected:number|undefined,onPick:(i:number)=>void)=><><div className="answers">{q.a.map((text,i)=><button key={i} disabled={selected!==undefined} onClick={()=>onPick(i)} className={selected!==undefined&&i===q.correct?"correct":selected===i?"incorrect":""}><span>{String.fromCharCode(65+i)}</span>{text}</button>)}</div>{selected!==undefined&&<div className="inset" role="status"><strong>{selected===q.correct?"✓ Správně":"Doporučený postup"}</strong>{q.why.map((explanation,i)=><p key={i}>{String.fromCharCode(65+i)}: <GlossaryText text={explanation}/></p>)}</div>}</>;
  return <>
  <nav className="wa-masthead" aria-label="Navigace Webett eHealth Akademie">
   <div className="wa-inner">
@@ -181,7 +246,7 @@ export default function App(){
 <li><strong>Závažný technický výpadek:</strong> ePoukaz nelze elektronicky vystavit a předpis nesnese odklad.</li>
 </ul><p className="exceptionConclusion">Pokud výjimka platí, uveďte na listinném poukazu konkrétní důvod.</p></>}</div><div className="scenarioPart"><h4>Jak to vysvětlím pacientovi?</h4><p><em>„{issues[issue].patient}“</em></p></div><div className="scenarioCaution"><strong>Na co si dát pozor</strong><p><GlossaryText text={issues[issue].caution}/></p></div><p className="sourceSmall">Podklad: {sourceLink(issues[issue].source)}{issues[issue].source===9?" · ":""}{issues[issue].source===9&&sourceLink(12)}.</p></div><button onClick={()=>{setTab(3);setDone(false);analyticsReportedQuiz.current=false;analyticsReportedResult.current=false;setQi(0);setTestAnswers({})}}>Pokračovat do části 4: Znalostní test →</button></div>}
  {tab===3&&!done&&<div className="stack"><div className="barrow"><div><span className="eyebrow">KRÁTKÝ PRAKTICKÝ TEST</span><h2>Co už víte?</h2></div><small>{qi+1} / {test.length}</small></div><div className="progress">{test.map((_,i)=><i key={i} className={i<=qi?"on":""}/>)}</div><div className="inset"><span className="eyebrow">SITUACE Z ORDINACE</span><h3>{test[qi].q}</h3></div>{options(test[qi],testAnswers[qi],i=>setTestAnswers(a=>({...a,[qi]:i})))}<div className="actions"><button className="secondary" disabled={qi===0} onClick={()=>setQi(i=>i-1)}>← Zpět</button><button disabled={testAnswers[qi]===undefined} onClick={()=>{if(qi===test.length-1){if(!analyticsReportedQuiz.current){window.academyTrack?.("quiz_completed",{score,total_questions:test.length,score_percent:Math.round(100*score/test.length)});analyticsReportedQuiz.current=true;} setDone(true);}else setQi(i=>i+1);}}>{qi===test.length-1?"Zobrazit výsledky →":"Další otázka →"}</button></div></div>}
- {tab===3&&done&&<div className="stack"><div className="success" role="status"><div className="bigIcon">{score===test.length?"★":"✓"}</div><span className="eyebrow">VÝSLEDEK ZNALOSTNÍHO TESTU</span><h2>{score} / {test.length}</h2><p>{score===test.length?"Výborně. Orientujete se v základních procesech.":"Projděte si vysvětlení a podle potřeby si test zopakujte."}</p><p className="muted">Výsledek není odbornou certifikací.</p></div><h3>Vysvětlení odpovědí</h3>{test.map((q,i)=><div className="inset" key={i}><strong>{testAnswers[i]===q.correct?"✓":"✕"} {i+1}. {q.q}</strong><p><GlossaryText text={q.why}/></p></div>)}<button onClick={()=>{setQi(0);setDone(false);analyticsReportedQuiz.current=false;analyticsReportedResult.current=false;setTestAnswers({})}}>Opakovat test →</button></div>}
+ {tab===3&&done&&<div className="stack"><div className="success" role="status"><div className="bigIcon">{score===test.length?"★":"✓"}</div><span className="eyebrow">VÝSLEDEK ZNALOSTNÍHO TESTU</span><h2>{score} / {test.length}</h2><p>{score===test.length?"Výborně. Orientujete se v základních procesech.":"Projděte si vysvětlení a podle potřeby si test zopakujte."}</p><p className="muted">Výsledek není odbornou certifikací.</p></div><h3>Vysvětlení odpovědí</h3>{test.map((q,i)=><div className="inset" key={i}><strong>{testAnswers[i]===q.correct?"✓":"✕"} {i+1}. {q.q}</strong><p><strong>Správná odpověď {String.fromCharCode(65+q.correct)}:</strong> <GlossaryText text={q.why[q.correct]}/></p></div>)}<button onClick={()=>{setQi(0);setDone(false);analyticsReportedQuiz.current=false;analyticsReportedResult.current=false;setTestAnswers({})}}>Opakovat test →</button></div>}
  </section>
- <ModuleRatingPanel/><footer><strong>Webett eHealth Academy</strong><p><strong>Klinické testování:</strong> Všechny aktuálně zveřejněné moduly prošly testováním s klinickými lékaři a jejich připomínky byly zapracovány do výukového obsahu.</p><p>Interaktivní výukový průvodce principy ePoukazu, nikoliv kopie skutečného rozhraní ePreskripce či informačního systému ordinace. Není propojen se skutečným eHealth systémem. Nezadávejte osobní nebo zdravotní údaje skutečných pacientů.</p><p>Odborné zdroje: {sources.map((item,i)=><span key={item[1]}>{i>0?" · ":""}{sourceLink(i)}</span>)}</p><div className="releaseMeta"><div><span>Verze aplikace</span><strong>1.0.7</strong></div><div><span>Poslední vydání</span><strong>24. 11. 2026</strong></div><div><span>Odborné ověření</span><strong>odborná kontrola a zpracované připomínky klinických lékařů</strong></div></div><p><a href="https://edu.webett.cz/#nastaveni-analytiky">Nastavení analytiky</a></p></footer></main></>;
+ <ModuleRatingPanel/><footer><strong>Webett eHealth Academy</strong><p><strong>Klinické testování:</strong> Všechny aktuálně zveřejněné moduly prošly testováním s klinickými lékaři a jejich připomínky byly zapracovány do výukového obsahu.</p><p>Interaktivní výukový průvodce principy ePoukazu, nikoliv kopie skutečného rozhraní ePreskripce či informačního systému ordinace. Není propojen se skutečným eHealth systémem. Nezadávejte osobní nebo zdravotní údaje skutečných pacientů.</p><p>Odborné zdroje: {sources.map((item,i)=><span key={item[1]}>{i>0?" · ":""}{sourceLink(i)}</span>)}</p><div className="releaseMeta"><div><span>Verze aplikace</span><strong>1.0.8</strong></div><div><span>Poslední vydání</span><strong>24. 11. 2026</strong></div><div><span>Odborné ověření</span><strong>odborná kontrola a zpracované připomínky klinických lékařů</strong></div></div><p><a href="https://edu.webett.cz/#nastaveni-analytiky">Nastavení analytiky</a></p></footer></main></>;
 }
