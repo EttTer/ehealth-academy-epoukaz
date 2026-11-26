@@ -690,6 +690,14 @@ const entries:Entry[]=[
     "forms": [
       "Zdravotnický software (SaMD)"
     ]
+  },
+  {
+    "slug": "isin",
+    "definition": "Informační systém infekčních nemocí – jeho vakcinační modul slouží k evidenci provedených očkování.",
+    "forms": [
+      "ISIN",
+      "Informační systém infekčních nemocí"
+    ]
   }
 ];
 
